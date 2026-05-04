@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard raamdecoratie.com — Q1+April 2026</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<style>
+/* (originele CSS behouden) */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:#F9F7F4;color:#2D2D2D;font-size:14px}
+.hdr{background:#2D2D2D;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px}
+.brand{font-family:"DM Mono",monospace;font-size:16px;font-weight:500;color:#F59901}
+.page{display:none;padding:24px}
+.page.active{display:block}
+.tab{cursor:pointer}
+.tab.active{color:#F59901}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="brand">raamdecoratie.com</div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active" onclick="showPage('ov', this)">Overzicht</button>
+  <button class="tab" onclick="showPage('adv', this)">Adviseurs</button>
+  <button class="tab" onclick="showPage('prov', this)">Provincie</button>
+</div>
+
+<div class="page active" id="page-ov">
+  <h2>Overzicht</h2>
+</div>
+
+<div class="page" id="page-adv">
+  <h2>Adviseurs</h2>
+</div>
+
+<div class="page" id="page-prov">
+  <h2>Provincie</h2>
+
+  <button onclick="selProv('Januari', this)">Januari</button>
+  <button onclick="selProv('Februari', this)">Februari</button>
+  <button onclick="selProv('Maart', this)">Maart</button>
+  <button onclick="selProv('April', this)">April</button>
+  <button onclick="selProv('Totaal', this)">Totaal</button>
+</div>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function selProv(maand, el) {
+  console.log('Geselecteerd:', maand);
+}
+</script>
+
+</body>
+</html>
