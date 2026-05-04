@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard raamdecoratie.com — Q1+April 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:#F9F7F4;color:#2D2D2D;font-size:14px}
+.hdr{background:#2D2D2D;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.brand{font-family:"DM Mono",monospace;font-size:16px;font-weight:500;color:#F59901}
+.hdr-right{display:flex;gap:8px;align-items:center}
+.badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-q1{background:#F59901;color:#2D2D2D}
+.badge-apr{background:#9c27b0;color:#fff}
+.tab-bar{background:#fff;border-bottom:1.5px solid #eee;display:flex;padding:0 24px;overflow-x:auto}
+.tab{padding:12px 18px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2.5px solid transparent;color:#999;white-space:nowrap;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none}
+.tab.active{color:#F59901;border-bottom-color:#F59901}
+.tab.t-apr{color:#9c27b0}.tab.t-apr.active{color:#9c27b0;border-bottom-color:#9c27b0}
+.tab.t-nc{color:#1565c0}.tab.t-nc.active{color:#1565c0;border-bottom-color:#1565c0}
+.tab:hover{color:#2D2D2D}
+.page{display:none;padding:24px 28px;max-width:1300px}
+.page.active{display:block}
+.sec{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#aaa;margin:22px 0 12px;display:flex;align-items:center;gap:8px}
+.sec::before{content:"";display:block;width:3px;height:14px;background:#F59901;border-radius:2px}
+.sec.bl::before{background:#1565c0}.sec.pu::before{background:#9c27b0}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:22px}
+.kpi{background:#fff;border-radius:12px;padding:15px 17px;border:1px solid #eee;position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:#eee}
+.kpi.acc::after{background:#F59901}.kpi.gd::after{background:#27ae60}
+.kpi.bl::after{background:#1565c0}.kpi.pu::after{background:#9c27b0}
+.kpi.rd::after{background:#e74c3c}
+.klabel{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kval{font-size:24px;font-weight:600;color:#2D2D2D;line-height:1.15}
+.ksub{font-size:11px;color:#bbb;margin-top:3px}
+.crow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.cc{background:#fff;border-radius:12px;padding:17px;border:1px solid #eee}
+.cc.full{grid-column:1/-1}
+.ctitle{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px;font-size:11px;color:#999}
+.legend span{display:flex;align-items:center;gap:4px}
+.dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:#2D2D2D;color:#fff;padding:8px 10px;text-align:left;font-size:11px;font-weight:500;letter-spacing:.3px}
+thead th.bl{background:#1565c0}
+thead th.pu{background:#9c27b0}
+tbody tr:nth-child(even){background:#fafafa}
+tbody tr:hover{background:#fff8ec}
+tbody td{padding:7px 10px;border-bottom:1px solid #f2f2f2}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.pg{background:#e8f5e9;color:#1b5e20}.po{background:#fff3e0;color:#e65100}
+.pr{background:#fce4ec;color:#ad1457}.pd{background:#2D2D2D;color:#F59901}
+.pa{background:#f3e5f5;color:#6a1b9a}
+.tr-tot td{border-top:2px solid #2D2D2D;background:#f4f4f4!important;font-weight:600}
+.tr-avg td{border-top:2px dashed #F59901;background:#fff8ec!important;font-weight:600}
+.tr-q1 td{border-top:1.5px solid #eee;background:#fafafa!important;font-weight:600}
+.scr{overflow-x:auto;margin-bottom:16px}
+.ibox{border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:10px;border-left:4px solid #F59901;background:#fff8ec}
+.ibox.bl{border-left-color:#1565c0;background:#e8f0fe}
+.ibox.warn{border-left-color:#e74c3c;background:#fdf0f0}
+.ibox.good{border-left-color:#27ae60;background:#f0fdf4}
+.ibox .it{font-weight:700;font-size:13px;margin-bottom:4px}
+.ibox p{font-size:12px;color:#555;line-height:1.6}
+.mbtn-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.mbtn{padding:5px 15px;border:1.5px solid #ddd;border-radius:20px;font-size:12px;cursor:pointer;background:#fff;color:#555;font-weight:600;transition:all .15s}
+.mbtn.active{background:#2D2D2D;color:#F59901;border-color:#2D2D2D}
+.nc-banner{background:#e3f2fd;border:1.5px solid #1565c0;border-radius:12px;padding:16px 20px;margin-bottom:22px;display:flex;align-items:flex-start;gap:14px}
+.nc-banner .icon{font-size:28px;line-height:1}
+.nc-banner .text{font-size:13px;color:#1565c0}
+.nc-banner strong{font-size:18px;display:block;color:#0d47a1;margin-bottom:3px}
+small{color:#aaa;font-size:10px}
+@media(max-width:680px){.crow{grid-template-columns:1fr}.page{padding:14px 12px}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="brand">raamdecoratie.com</div>
+  <div class="hdr-right">
+    <span class="badge badge-q1">Q1 2026</span>
+    <span class="badge badge-apr">+ April 2026</span>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active" onclick="showPage('ov',this)">📊 Overzicht</button>
+  <button class="tab" onclick="showPage('adv',this)">👤 Adviseurs</button>
+  <button class="tab" onclick="showPage('prov',this)">🗺️ Provincie</button>
+  <button class="tab" onclick="showPage('regio',this)">📍 Adv. per regio</button>
+  <button class="tab" onclick="showPage('nab',this)">📞 Nabellen</button>
+  <button class="tab t-apr" onclick="showPage('apr',this)">🟣 April detail</button>
+  <button class="tab t-nc" onclick="showPage('nc',this)">🆕 Nieuwe bestellingen</button>
+</div>
+
+<div class="page active" id="page-ov">
+  <div class="sec">Totaal Q1 + April 2026 (excl. Kevin)</div>
+  <div class="kgrid">
+    <div class="kpi acc"><div class="klabel">Totaal ingemeten</div><div class="kval">1,876</div><div class="ksub">Jan t/m Apr</div></div>
+    <div class="kpi acc"><div class="klabel">Totaal besteld</div><div class="kval">1,364</div><div class="ksub">van 1,876 metingen</div></div>
+    <div class="kpi gd"><div class="klabel">Conversie totaal</div><div class="kval">72.7%</div><div class="ksub">besteld / ingemeten</div></div>
+    <div class="kpi"><div class="klabel">Waarde ingemeten</div><div class="kval" style="font-size:19px">€3.483.416</div><div class="ksub">Jan t/m Apr</div></div>
+    <div class="kpi"><div class="klabel">Waarde besteld</div><div class="kval" style="font-size:19px">€2.411.064</div><div class="ksub">Jan t/m Apr</div></div>
+    <div class="kpi rd"><div class="klabel">April conversie</div><div class="kval" style="color:#e74c3c">65.1%</div><div class="ksub">▼ 10.3 ppt vs Q1 gem</div></div>
+  </div>
+
+  <div class="ibox warn">
+    <div class="it">⚠️ April conversie daalt naar 65.1% — 10.3 ppt onder Q1 gemiddelde (75.4%)</div>
+    <p>Van 473 metingen zijn er 165 niet besteld. Torsten scoort het laagst in april (51,3%), gevolgd door Peter (60,5%). Jeffrey scoort het sterkst in april (71,4%). Gerichte opvolging in mei is gewenst.</p>
+  </div>
+
+  <div class="crow">
+    <div class="cc">
+      <div class="ctitle">Conversie% per maand</div>
+      <div class="legend">
+        <span><span class="dot" style="background:#F59901"></span>Q1 maanden</span>
+        <span><span class="dot" style="background:#9c27b0"></span>April</span>
+        <span><span class="dot" style="border:1.5px dashed #aaa;background:transparent"></span>Q1 gem. 75.4%</span>
+      </div>
+      <div style="position:relative;height:240px"><canvas id="cConv"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="ctitle">Waarde ingemeten vs besteld (€)</div>
+      <div class="legend"><span><span class="dot" style="background:#F9CD92"></span>Ingemeten</span><span><span class="dot" style="background:#F59901"></span>Besteld</span></div>
+      <div style="position:relative;height:240px"><canvas id="cWaarde"></canvas></div>
+    </div>
+  </div>
+
+  <div class="sec">Maandoverzicht</div>
+  <div class="scr"><table>
+    <thead><tr><th>Maand</th><th>Ingemeten</th><th>Besteld</th><th>Niet best.</th><th>Conv%</th><th>Waarde ing.</th><th>Waarde best.</th><th>Conv%€</th></tr></thead>
+    <tbody>
+      <tr><td>Januari</td><td>406</td><td>312</td><td>94</td><td><span class="pill pg">76.8%</span></td><td>€749.006</td><td>€557.056</td><td>74.4%</td></tr><tr><td>Februari</td><td>509</td><td>370</td><td>139</td><td><span class="pill po">72.7%</span></td><td>€891.173</td><td>€627.690</td><td>70.4%</td></tr><tr><td>Maart</td><td>488</td><td>374</td><td>114</td><td><span class="pill pg">76.6%</span></td><td>€977.644</td><td>€740.951</td><td>75.8%</td></tr><tr><td>April <span style="font-size:10px;background:#f3e5f5;color:#6a1b9a;padding:1px 6px;border-radius:10px;font-weight:700">NIEUW</span></td><td>473</td><td>308</td><td>165</td><td><span class="pill pa">65.1%</span></td><td>€865.593</td><td>€485.367</td><td>56.1%</td></tr>
+      <tr class="tr-q1"><td>Q1 subtotaal</td><td>1403</td><td>1056</td><td>347</td><td><span class="pill pd">75.3%</span></td><td>€2.617.823</td><td>€1.925.697</td><td>73.6%</td></tr>
+      <tr class="tr-tot"><td><strong>Totaal</strong></td><td>1876</td><td>1364</td><td>512</td><td><span class="pill pd">72.7%</span></td><td>€3.483.416</td><td>€2.411.064</td><td>69.2%</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<div class="page" id="page-adv">
+  <div class="sec">Conversie per adviseur — Q1 + April (getallen zichtbaar)</div>
+  <div class="crow"><div class="cc full">
+    <div class="ctitle">Conversie% per adviseur per maand — labels tonen besteld/ingemeten bij hover</div>
+    <div class="legend">
+      <span><span class="dot" style="background:#F59901"></span>Jan</span>
+      <span><span class="dot" style="background:#2D2D2D"></span>Feb</span>
+      <span><span class="dot" style="background:#F9CD92"></span>Mrt</span>
+      <span><span class="dot" style="background:#ce93d8"></span>Apr</span>
+    </div>
+    <div style="position:relative;height:360px"><canvas id="cAdvConv"></canvas></div>
+  </div></div>
+
+  <div class="sec">Detailtabel — alle 4 maanden + totaal</div>
+  <div class="scr"><table>
+    <thead>
+      <tr>
+        <th>Adviseur</th>
+        <th>Jan ing.</th><th>Jan best.</th><th>Jan%</th>
+        <th>Feb ing.</th><th>Feb best.</th><th>Feb%</th>
+        <th>Mrt ing.</th><th>Mrt best.</th><th>Mrt%</th>
+        <th class="pu">Apr ing.</th><th class="pu">Apr best.</th><th class="pu">Apr%</th>
+        <th class="bl">Totaal</th><th class="bl">%</th>
+      </tr>
+    </thead>
+    <tbody><tr><td><strong>Cristian</strong></td><td>52</td><td>42</td><td><span class="pill pg">80.8%</span></td><td>72</td><td>59</td><td><span class="pill pg">81.9%</span></td><td>61</td><td>48</td><td><span class="pill pg">78.7%</span></td><td>60</td><td>41</td><td><span class="pill pg">68.3%</span></td><td>190/245</td><td><span class="pill pd">77.6%</span></td></tr>
+<tr><td><strong>Dennis</strong></td><td>42</td><td>36</td><td><span class="pill pg">85.7%</span></td><td>46</td><td>31</td><td><span class="pill po">67.4%</span></td><td>58</td><td>52</td><td><span class="pill pg">89.7%</span></td><td>48</td><td>31</td><td><span class="pill pr">64.6%</span></td><td>150/194</td><td><span class="pill pd">77.3%</span></td></tr>
+<tr><td><strong>Jeffrey</strong></td><td>18</td><td>13</td><td><span class="pill po">72.2%</span></td><td>56</td><td>41</td><td><span class="pill pg">73.2%</span></td><td>65</td><td>46</td><td><span class="pill po">70.8%</span></td><td>63</td><td>45</td><td><span class="pill pg">71.4%</span></td><td>145/202</td><td><span class="pill pd">71.8%</span></td></tr>
+<tr><td><strong>Michel</strong></td><td>28</td><td>20</td><td><span class="pill po">71.4%</span></td><td>40</td><td>29</td><td><span class="pill po">72.5%</span></td><td>66</td><td>52</td><td><span class="pill pg">78.8%</span></td><td>62</td><td>42</td><td><span class="pill pg">67.7%</span></td><td>143/196</td><td><span class="pill pd">73.0%</span></td></tr>
+<tr><td><strong>Peter</strong></td><td>51</td><td>38</td><td><span class="pill po">74.5%</span></td><td>55</td><td>40</td><td><span class="pill pg">72.7%</span></td><td>59</td><td>43</td><td><span class="pill po">72.9%</span></td><td>43</td><td>26</td><td><span class="pill pr">60.5%</span></td><td>147/208</td><td><span class="pill pd">70.7%</span></td></tr>
+<tr><td><strong>Quinten</strong></td><td>48</td><td>34</td><td><span class="pill po">70.8%</span></td><td>59</td><td>42</td><td><span class="pill po">71.2%</span></td><td>63</td><td>45</td><td><span class="pill po">71.4%</span></td><td>43</td><td>28</td><td><span class="pill pg">65.1%</span></td><td>149/213</td><td><span class="pill pd">70.0%</span></td></tr>
+<tr><td><strong>Ramon</strong></td><td>82</td><td>73</td><td><span class="pill pg">89.0%</span></td><td>80</td><td>63</td><td><span class="pill pg">78.8%</span></td><td>39</td><td>30</td><td><span class="pill pg">76.9%</span></td><td>43</td><td>29</td><td><span class="pill pg">67.4%</span></td><td>195/244</td><td><span class="pill pd">79.9%</span></td></tr>
+<tr><td><strong>Remco</strong></td><td>48</td><td>28</td><td><span class="pill pr">58.3%</span></td><td>50</td><td>37</td><td><span class="pill pg">74.0%</span></td><td>52</td><td>40</td><td><span class="pill pg">76.9%</span></td><td>72</td><td>46</td><td><span class="pill pr">63.9%</span></td><td>151/222</td><td><span class="pill pd">68.0%</span></td></tr>
+<tr><td><strong>Torsten</strong></td><td>37</td><td>28</td><td><span class="pill po">75.7%</span></td><td>51</td><td>28</td><td><span class="pill pr">54.9%</span></td><td>25</td><td>18</td><td><span class="pill po">72.0%</span></td><td>39</td><td>20</td><td><span class="pill pr">51.3%</span></td><td>94/152</td><td><span class="pill pd">61.8%</span></td></tr>
+<tr class="tr-avg"><td><strong>Team gem.</strong></td><td>406</td><td>312</td><td><span class="pill pd">76.8%</span></td><td>509</td><td>370</td><td><span class="pill pd">72.7%</span></td><td>488</td><td>374</td><td><span class="pill pd">76.6%</span></td><td>473</td><td>308</td><td><span class="pill pd">65.1%</span></td><td>1364/1876</td><td><span class="pill pd">72.7%</span></td></tr>
+</tbody>
+  </table></div>
+
+  <div class="sec" style="margin-top:22px">Gemiddelde per maand — benchmark</div>
+  <div class="scr"><table>
+    <thead><tr><th>Maand</th><th>Team gem.</th><th>Hoogst</th><th>Laagst</th><th>Spreiding</th></tr></thead>
+    <tbody>
+<tr><td>Januari</td><td><span class="pill pg">76.8%</span></td><td>Ramon 89.0%</td><td>Remco 58.3%</td><td>30.7 ppt</td></tr>
+<tr><td>Februari</td><td><span class="pill po">72.7%</span></td><td>Cristian 81.9%</td><td>Torsten 54.9%</td><td>27.0 ppt</td></tr>
+<tr><td>Maart</td><td><span class="pill pg">76.6%</span></td><td>Dennis 89.7%</td><td>Jeffrey 70.8%</td><td>18.9 ppt</td></tr>
+<tr><td>April</td><td><span class="pill pa">65.1%</span></td><td>Jeffrey 71.4%</td><td>Torsten 51.3%</td><td>20.1 ppt</td></tr>
+<tr class="tr-avg"><td>Q1+Apr totaal</td><td><span class="pill pd">72.7%</span></td><td>Ramon 79.9%</td><td>Torsten 61.8%</td><td>18.1 ppt</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="sec" style="margin-top:22px">Inmeet waarde per adviseur per maand (€)</div>
+  <div class="crow"><div class="cc full">
+    <div class="ctitle">Ingemeten waarde per adviseur</div>
+    <div class="legend"><span><span class="dot" style="background:#F59901"></span>Jan</span><span><span class="dot" style="background:#2D2D2D"></span>Feb</span><span><span class="dot" style="background:#F9CD92"></span>Mrt</span><span><span class="dot" style="background:#ce93d8"></span>Apr</span></div>
+    <div style="position:relative;height:320px"><canvas id="cAdvWaarde"></canvas></div>
+  </div></div>
+</div>
+
+<div class="page" id="page-prov">
+  <div class="sec">Provincie — selecteer periode</div>
+  <div class="mbtn-bar">
+    <button class="mbtn" onclick="selProv("Januari",this)">Januari</button>
+    <button class="mbtn" onclick="selProv("Februari",this)">Februari</button>
+    <button class="mbtn" onclick="selProv("Maart",this)">Maart</button>
+    <button class="mbtn t-apr" onclick="selProv("April",this)">April</button>
+    <button class="mbtn active" onclick="selProv("Totaal",this)">Q1+Apr Totaal</button>
+  </div>
+  <div class="crow"><div class="cc full">
+    <div class="ctitle" id="prov-title">Conversie % per provincie — Q1+Apr Totaal</div>
+    <div style="position:relative;" id="prov-wrap"><canvas id="cProv"></canvas></div>
+  </div></div>
+  <div class="crow"><div class="cc full">
+    <div class="ctitle" id="prov-vol-title">Volume — Q1+Apr Totaal</div>
+    <div class="legend"><span><span class="dot" style="background:#F9CD92"></span>Ingemeten</span><span><span class="dot" style="background:#F59901"></span>Besteld</span></div>
+    <div style="position:relative;height:380px"><canvas id="cProvVol"></canvas></div>
+  </div></div>
+  <div class="scr"><table>
+    <thead><tr><th>Provincie</th><th>Ingemeten</th><th>Besteld</th><th>Niet besteld</th><th>Conversie</th></tr></thead>
+    <tbody id="provtb"></tbody>
+  </table></div>
+</div>
+
+<div class="page" id="page-regio">
+  <div class="sec">Heatmap — conversie per adviseur per provincie (Q1+Apr totaal)</div>
+  <p style="font-size:11px;color:#999;margin-bottom:12px">Groen ≥85% · Lichtgroen ≥75% · Oranje ≥65% · Rood &lt;65% · — = &lt;3 metingen</p>
+  <div class="scr"><table>
+    <thead><tr><th>Provincie</th><th>Totaal</th><th>Cristian</th><th>Dennis</th><th>Jeffrey</th><th>Michel</th><th>Peter</th><th>Quinten</th><th>Ramon</th><th>Remco</th><th>Torsten</th></tr></thead>
+    <tbody><tr><td><strong>Overijssel</strong></td><td><span class="pill po">77.8%</span><br><small style="color:#aaa">309/397</small></td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">91.7%</strong><br><small style="color:#aaa">11/12</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">77.6%</strong><br><small style="color:#aaa">76/98</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">72.6%</strong><br><small style="color:#aaa">61/84</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">84.6%</strong><br><small style="color:#aaa">11/13</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">81.8%</strong><br><small style="color:#aaa">135/165</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">56.5%</strong><br><small style="color:#aaa">13/23</small></td></tr>
+<tr><td><strong>Zuid-Holland</strong></td><td><span class="pill po">71.6%</span><br><small style="color:#aaa">184/257</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">79.2%</strong><br><small style="color:#aaa">57/72</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">55.6%</strong><br><small style="color:#aaa">10/18</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">70.8%</strong><br><small style="color:#aaa">75/106</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">65.0%</strong><br><small style="color:#aaa">13/20</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">70.7%</strong><br><small style="color:#aaa">29/41</small></td></tr>
+<tr><td><strong>Noord-Holland</strong></td><td><span class="pill pr">66.4%</span><br><small style="color:#aaa">150/226</small></td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">100.0%</strong><br><small style="color:#aaa">4/4</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">75.0%</strong><br><small style="color:#aaa">3/4</small></td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">42.9%</strong><br><small style="color:#aaa">6/14</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">68.2%</strong><br><small style="color:#aaa">107/157</small></td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">62.2%</strong><br><small style="color:#aaa">28/45</small></td></tr>
+<tr><td><strong>Noord-Brabant</strong></td><td><span class="pill po">75.6%</span><br><small style="color:#aaa">164/217</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">75.9%</strong><br><small style="color:#aaa">41/54</small></td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">85.7%</strong><br><small style="color:#aaa">6/7</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">76.2%</strong><br><small style="color:#aaa">32/42</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">78.4%</strong><br><small style="color:#aaa">40/51</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">71.7%</strong><br><small style="color:#aaa">43/60</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">66.7%</strong><br><small style="color:#aaa">2/3</small></td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Gelderland</strong></td><td><span class="pill po">71.6%</span><br><small style="color:#aaa">141/197</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">75.0%</strong><br><small style="color:#aaa">15/20</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">78.1%</strong><br><small style="color:#aaa">50/64</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">73.3%</strong><br><small style="color:#aaa">11/15</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">67.2%</strong><br><small style="color:#aaa">41/61</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">72.2%</strong><br><small style="color:#aaa">13/18</small></td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">100.0%</strong><br><small style="color:#aaa">8/8</small></td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">22.2%</strong><br><small style="color:#aaa">2/9</small></td></tr>
+<tr><td><strong>Utrecht</strong></td><td><span class="pill po">73.6%</span><br><small style="color:#aaa">103/140</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">77.8%</strong><br><small style="color:#aaa">49/63</small></td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">55.6%</strong><br><small style="color:#aaa">5/9</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">74.3%</strong><br><small style="color:#aaa">26/35</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">72.7%</strong><br><small style="color:#aaa">8/11</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">68.4%</strong><br><small style="color:#aaa">13/19</small></td></tr>
+<tr><td><strong>België</strong></td><td><span class="pill pr">68.9%</span><br><small style="color:#aaa">62/90</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">66.7%</strong><br><small style="color:#aaa">52/78</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">83.3%</strong><br><small style="color:#aaa">10/12</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Limburg</strong></td><td><span class="pill po">76.9%</span><br><small style="color:#aaa">60/78</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">66.7%</strong><br><small style="color:#aaa">2/3</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">76.8%</strong><br><small style="color:#aaa">53/69</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">83.3%</strong><br><small style="color:#aaa">5/6</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Flevoland</strong></td><td><span class="pill pr">59.1%</span><br><small style="color:#aaa">26/44</small></td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">33.3%</strong><br><small style="color:#aaa">1/3</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">63.2%</strong><br><small style="color:#aaa">12/19</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">53.3%</strong><br><small style="color:#aaa">8/15</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">66.7%</strong><br><small style="color:#aaa">4/6</small></td></tr>
+<tr><td><strong>Groningen</strong></td><td><span class="pill pg">89.5%</span><br><small style="color:#aaa">34/38</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">88.2%</strong><br><small style="color:#aaa">15/17</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">90.5%</strong><br><small style="color:#aaa">19/21</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Drenthe</strong></td><td><span class="pill po">75.8%</span><br><small style="color:#aaa">25/33</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">70.0%</strong><br><small style="color:#aaa">7/10</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">77.3%</strong><br><small style="color:#aaa">17/22</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Frysl√¢n</strong></td><td><span class="pill pg">80.0%</span><br><small style="color:#aaa">24/30</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">80.0%</strong><br><small style="color:#aaa">16/20</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">75.0%</strong><br><small style="color:#aaa">6/8</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Zeeland</strong></td><td><span class="pill pr">68.4%</span><br><small style="color:#aaa">13/19</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">68.4%</strong><br><small style="color:#aaa">13/19</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Fryslân</strong></td><td><span class="pill pr">62.5%</span><br><small style="color:#aaa">10/16</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">66.7%</strong><br><small style="color:#aaa">8/12</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">50.0%</strong><br><small style="color:#aaa">2/4</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+</tbody>
+  </table></div>
+  <div class="sec" style="margin-top:22px">Conclusies</div>
+  <div class="ibox good"><div class="it">Ramon — dominant in Overijssel (85%+ Q1, stabiel in April)</div><p>Ramon scoort structureel het hoogst in Overijssel. Zijn aanpak is de benchmark voor deze regio.</p></div>
+  <div class="ibox good"><div class="it">Jeffrey — sterkste april prestatie (71,4%) en best in Limburg + België</div><p>Jeffrey is de enige adviseur die zijn Q1-niveau bijna vasthoudt in april. In Limburg scoort hij structureel boven 75%.</p></div>
+  <div class="ibox warn"><div class="it">Torsten — zwakste performer in Q1+Apr (laagste totaalconversie)</div><p>Dips in Gelderland (feb: 28,6%) en Overijssel (feb: 45,5%), april overall 51,3%. Coaching en regio-analyse gewenst.</p></div>
+  <div class="ibox warn"><div class="it">Noord-Holland — consequent laagste provincie (65-68%)</div><p>Remco, Peter en Torsten rijden hier. Allen scoren onder hun eigen gemiddelde in deze regio. Hogere prijsgevoeligheid of meer concurrentie mogelijk.</p></div>
+  <div class="ibox warn"><div class="it">April-dip zichtbaar bij alle adviseurs — Flevoland, Zeeland en Zuid-Holland dalen het hardst</div><p>Flevoland daalt naar 50%, Zeeland naar 33,3%, Zuid-Holland naar 53,7% in april. Dit zijn regio's om prioriteit aan te geven in mei.</p></div>
+</div>
+
+<div class="page" id="page-nab">
+  <div class="sec">Nabellen — Q1+April overzicht</div>
+  <div class="kgrid">
+    <div class="kpi"><div class="klabel">Jan nabellen conv.</div><div class="kval">42.9%</div><div class="ksub">39/91</div></div>
+    <div class="kpi"><div class="klabel">Feb nabellen conv.</div><div class="kval">34.4%</div><div class="ksub">52/151</div></div>
+    <div class="kpi"><div class="klabel">Mrt nabellen conv.</div><div class="kval">38.5%</div><div class="ksub">52/135</div></div>
+    <div class="kpi pu"><div class="klabel">Apr nabellen conv.</div><div class="kval" style="color:#9c27b0">11.1%</div><div class="ksub">8/72</div></div>
+  </div>
+  <div class="ibox" style="margin-bottom:16px">
+    <div class="it">ℹ️ April nabellen staat nog in de beginfase</div>
+    <p>De april metingen zijn recent gedaan — het nabellen loopt door in mei. Verwacht hogere conversies bij de volgende meting. Q1 nabellen conversie gemiddeld ~37%.</p>
+  </div>
+  <div class="crow">
+    <div class="cc"><div class="ctitle">Nabellen conversie per maand</div>
+    <div style="position:relative;height:240px"><canvas id="cNab"></canvas></div></div>
+    <div class="cc"><div class="ctitle">Redenen geen bestelling — totaal Q1+Apr</div>
+    <div style="position:relative;height:240px"><canvas id="cReden"></canvas></div></div>
+  </div>
+  <div class="sec">Redenen per maand</div>
+  <div class="scr"><table>
+    <thead><tr><th>Reden</th><th>Januari</th><th>Februari</th><th>Maart</th><th class="pu">April</th><th>Totaal</th></tr></thead>
+    <tbody><tr><td>Geen gehoor</td><td>20</td><td>55</td><td>28</td><td>31</td><td><strong>134</strong></td></tr>
+<tr><td>Is er nog mee bezig</td><td>16</td><td>19</td><td>27</td><td>20</td><td><strong>82</strong></td></tr>
+<tr><td>Ziet ervan af</td><td>3</td><td>7</td><td>14</td><td>3</td><td><strong>27</strong></td></tr>
+<tr><td>Overig (reden plaatsen in blad 'redenen')</td><td>3</td><td>5</td><td>7</td><td>4</td><td><strong>19</strong></td></tr>
+<tr><td>Gaat bestellen</td><td>3</td><td>2</td><td>1</td><td>2</td><td><strong>8</strong></td></tr>
+<tr><td>Wacht op korting</td><td>2</td><td>3</td><td>1</td><td>1</td><td><strong>7</strong></td></tr>
+<tr><td>Elders goedkoper</td><td>1</td><td>2</td><td>3</td><td>0</td><td><strong>6</strong></td></tr>
+<tr><td>Nogmaals meten</td><td>1</td><td>2</td><td>1</td><td>1</td><td><strong>5</strong></td></tr>
+<tr><td>Service</td><td>2</td><td>2</td><td>0</td><td>0</td><td><strong>4</strong></td></tr>
+<tr><td>Uitstel vanwege andere prioriteiten</td><td>1</td><td>0</td><td>0</td><td>2</td><td><strong>3</strong></td></tr>
+<tr><td>Niet kunnen leveren wat de klant wil</td><td>0</td><td>1</td><td>0</td><td>0</td><td><strong>1</strong></td></tr>
+<tr><td>Technisch (lege winkelwagen/ niet inloggen/ contact)</td><td>0</td><td>0</td><td>1</td><td>0</td><td><strong>1</strong></td></tr>
+</tbody>
+  </table></div>
+  <div class="ibox warn" style="margin-top:16px"><div class="it">Geen gehoor — hardnekkig (ook in April)</div><p>Meest voorkomende reden in alle maanden. Overweeg WhatsApp/SMS als extra contactkanaal. In april al 46x geregistreerd ondanks vroeg stadium.</p></div>
+  <div class="ibox"><div class="it">"Is er nog mee bezig" — warm segment, prima voor follow-up</div><p>In maart 28x, in april al vroeg aanwezig. Structureerde 1-2 week follow-up voor dit segment levert aantoonbaar resultaat — zie tab Nieuwe bestellingen.</p></div>
+</div>
+
+<div class="page" id="page-apr">
+  <div class="sec pu">April 2026 — volledig detail</div>
+  <div class="kgrid">
+    <div class="kpi pu"><div class="klabel">Ingemeten</div><div class="kval">473</div><div class="ksub">April 2026</div></div>
+    <div class="kpi pu"><div class="klabel">Besteld</div><div class="kval">308</div><div class="ksub">van 473 metingen</div></div>
+    <div class="kpi rd"><div class="klabel">Conversie</div><div class="kval" style="color:#e74c3c">65.1%</div><div class="ksub">▼ 10.3 ppt vs Q1 gem</div></div>
+    <div class="kpi"><div class="klabel">Waarde ingemeten</div><div class="kval" style="font-size:19px">€865.593</div><div class="ksub">April 2026</div></div>
+    <div class="kpi"><div class="klabel">Waarde besteld</div><div class="kval" style="font-size:19px">€485.367</div><div class="ksub">April 2026</div></div>
+    <div class="kpi"><div class="klabel">Conv% waarde</div><div class="kval">56.1%</div><div class="ksub">besteld / ingemeten €</div></div>
+  </div>
+
+  <div class="crow">
+    <div class="cc">
+      <div class="ctitle">Adviseurs april — conv% vs Q1 gemiddelde</div>
+      <div style="position:relative;height:260px"><canvas id="cAprAdv"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="ctitle">Provincie conversie — April</div>
+      <div style="position:relative;height:260px"><canvas id="cAprProv"></canvas></div>
+    </div>
+  </div>
+
+  <div class="sec pu">Per adviseur — April detail</div>
+  <div class="scr"><table>
+    <thead><tr><th>Adviseur</th><th>Ingemeten</th><th>Besteld</th><th>Niet best.</th><th>Conv%</th><th>Waarde ing.</th><th>Waarde best.</th><th>vs Q1 gem</th></tr></thead>
+    <tbody>
+<tr><td><strong>Cristian</strong></td><td>60</td><td>41</td><td>19</td><td><span class="pill po">68.3%</span></td><td>€110.748</td><td>€71.929</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-12.2%</span></td></tr>
+<tr><td><strong>Dennis</strong></td><td>48</td><td>31</td><td>17</td><td><span class="pill po">64.6%</span></td><td>€114.727</td><td>€56.077</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-16.3%</span></td></tr>
+<tr><td><strong>Jeffrey</strong></td><td>63</td><td>45</td><td>18</td><td><span class="pill pg">71.4%</span></td><td>€85.201</td><td>€50.832</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-0.7%</span></td></tr>
+<tr><td><strong>Michel</strong></td><td>62</td><td>42</td><td>20</td><td><span class="pill po">67.7%</span></td><td>€123.210</td><td>€78.156</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-6.5%</span></td></tr>
+<tr><td><strong>Peter</strong></td><td>43</td><td>26</td><td>17</td><td><span class="pill po">60.5%</span></td><td>€75.119</td><td>€41.188</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-12.9%</span></td></tr>
+<tr><td><strong>Quinten</strong></td><td>43</td><td>28</td><td>15</td><td><span class="pill po">65.1%</span></td><td>€73.255</td><td>€44.905</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-6.0%</span></td></tr>
+<tr><td><strong>Ramon</strong></td><td>43</td><td>29</td><td>14</td><td><span class="pill po">67.4%</span></td><td>€69.496</td><td>€44.516</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-14.2%</span></td></tr>
+<tr><td><strong>Remco</strong></td><td>72</td><td>46</td><td>26</td><td><span class="pill po">63.9%</span></td><td>€137.871</td><td>€74.388</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-5.8%</span></td></tr>
+<tr><td><strong>Torsten</strong></td><td>39</td><td>20</td><td>19</td><td><span class="pill pr">51.3%</span></td><td>€75.966</td><td>€23.376</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-16.2%</span></td></tr>
+    <tr class="tr-tot"><td>Totaal</td><td>473</td><td>308</td><td>165</td><td><span class="pill pa">65.1%</span></td><td>€865.593</td><td>€485.367</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-10.3%</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="sec pu">Provincie — April</div>
+  <div class="scr"><table>
+    <thead><tr><th>Provincie</th><th>Ingemeten</th><th>Besteld</th><th>Niet besteld</th><th>Conversie</th></tr></thead>
+    <tbody>
+<tr><td><strong>Overijssel</strong></td><td>107</td><td>74</td><td>33</td><td><span class="pill po">69.2%</span></td></tr>
+<tr><td><strong>Noord-Holland</strong></td><td>61</td><td>38</td><td>23</td><td><span class="pill pr">62.3%</span></td></tr>
+<tr><td><strong>Zuid-Holland</strong></td><td>54</td><td>31</td><td>23</td><td><span class="pill pr">57.4%</span></td></tr>
+<tr><td><strong>Gelderland</strong></td><td>38</td><td>25</td><td>13</td><td><span class="pill po">65.8%</span></td></tr>
+<tr><td><strong>Noord-Brabant</strong></td><td>37</td><td>26</td><td>11</td><td><span class="pill po">70.3%</span></td></tr>
+<tr><td><strong>Utrecht</strong></td><td>35</td><td>27</td><td>8</td><td><span class="pill pg">77.1%</span></td></tr>
+<tr><td><strong>Limburg</strong></td><td>29</td><td>23</td><td>6</td><td><span class="pill pg">79.3%</span></td></tr>
+<tr><td><strong>België</strong></td><td>24</td><td>15</td><td>9</td><td><span class="pill pr">62.5%</span></td></tr>
+<tr><td><strong>Flevoland</strong></td><td>16</td><td>8</td><td>8</td><td><span class="pill pr">50.0%</span></td></tr>
+<tr><td><strong>Fryslân</strong></td><td>15</td><td>9</td><td>6</td><td><span class="pill pr">60.0%</span></td></tr>
+<tr><td><strong>Drenthe</strong></td><td>13</td><td>9</td><td>4</td><td><span class="pill po">69.2%</span></td></tr>
+<tr><td><strong>Groningen</strong></td><td>10</td><td>7</td><td>3</td><td><span class="pill po">70.0%</span></td></tr>
+<tr><td><strong>Zeeland</strong></td><td>5</td><td>3</td><td>2</td><td><span class="pill pr">60.0%</span></td></tr>
+<tr><td><strong>nan</strong></td><td>2</td><td>1</td><td>1</td><td><span class="pill pr">50.0%</span></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<div class="page" id="page-nc">
+  <div class="nc-banner">
+    <div class="icon">🆕</div>
+    <div class="text">
+      <strong>9 nieuwe bestellingen gedetecteerd t.o.v. vorige meting</strong>
+      Klanten in Q1 die eerder <strong>NIET</strong> hadden besteld en nu <strong>WEL</strong> — puur door actief opvolgen.<br>
+      Extra omzet: <strong>€20.525</strong> &nbsp;·&nbsp; Via mail: <strong>7x</strong> &nbsp;·&nbsp; Via bellen: <strong>2x</strong>
+    </div>
+  </div>
+
+  <div class="kgrid">
+    <div class="kpi bl"><div class="klabel">Nieuwe bestellingen</div><div class="kval" style="color:#1565c0">9</div><div class="ksub">t.o.v. vorige meting</div></div>
+    <div class="kpi bl"><div class="klabel">Extra omzet</div><div class="kval" style="font-size:19px">€20.525</div><div class="ksub">puur via nabellen/mail</div></div>
+    <div class="kpi gd"><div class="klabel">Via mail</div><div class="kval">7x</div><div class="ksub">78% van conversies</div></div>
+    <div class="kpi gd"><div class="klabel">Via bellen</div><div class="kval">2x</div><div class="ksub">22% van conversies</div></div>
+  </div>
+
+  <div class="ibox bl"><div class="it">📧 Mail meest effectief (78%) — alle 9 conversies via actief contact</div><p>Niemand bestelde spontaan. 7 via mail, 2 via bellen. Dit bewijst de directe waarde van het nabelsysteem. Elke run laat nieuwe resultaten zien van eerder werk.</p></div>
+  <div class="ibox good"><div class="it">💰 €20.525 extra omzet door structureel opvolgen</div><p>Klanten met eerder "Geen gehoor" of "Is er nog mee bezig" hebben alsnog besteld. Ramon, Torsten, Remco en Cristian scoren elk meerdere nieuwe conversies.</p></div>
+
+  <div class="sec bl">Detectiemethode</div>
+  <div style="background:#fff;border:1px solid #eee;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:12px;line-height:1.8;color:#555">
+    Per order in Q1 (jan, feb, mrt) is kolom G (Besteld) vergeleken tussen de <strong>vorige meting</strong> (originele bellijst) en de <strong>huidige meting</strong> (nieuwe bellijst BellijstQ1enApril).
+    Orders waarbij kolom G <strong>leeg was</strong> en nu <strong>gevuld is</strong> = nieuwe bestelling.
+    Kolom J (Bel of mail) toont het gebruikte contactkanaal.
+  </div>
+
+  <div class="sec bl">Alle nieuwe bestellingen</div>
+  <div class="scr"><table>
+    <thead><tr><th class="bl">Klant</th><th class="bl">Maand</th><th class="bl">Adviseur</th><th class="bl">Waarde</th><th class="bl">Via</th><th class="bl">Vorige reden</th></tr></thead>
+    <tbody><tr><td><strong>Danny Scholing</strong></td><td>Januari</td><td>Ramon</td><td>€2.926</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">Is er nog mee bezig</td></tr>
+<tr><td><strong>Petra Krudde</strong></td><td>Februari</td><td>Torsten</td><td>€2.713</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">Geen gehoor</td></tr>
+<tr><td><strong>Martijn Visser</strong></td><td>Februari</td><td>Ramon</td><td>€1.627</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">Geen gehoor</td></tr>
+<tr><td><strong>Melanie De Graaf</strong></td><td>Maart</td><td>Torsten</td><td>€4.457</td><td><span style="background:#e8f5e9;color:#1b5e20;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📞 Bellen</span></td><td style="color:#666;font-size:11px">Geen gehoor</td></tr>
+<tr><td><strong>Olaf Corduwener</strong></td><td>Maart</td><td>Jeffrey</td><td>€4.230</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">—</td></tr>
+<tr><td><strong>Anneke Rietman</strong></td><td>Maart</td><td>Cristian</td><td>€1.361</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">Geen gehoor</td></tr>
+<tr><td><strong>Asli Akyol</strong></td><td>Maart</td><td>Remco</td><td>€1.135</td><td><span style="background:#e8f5e9;color:#1b5e20;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📞 Bellen</span></td><td style="color:#666;font-size:11px">Overig (reden plaatsen in blad 'redenen')</td></tr>
+<tr><td><strong>Ingeborg Bloem</strong></td><td>Maart</td><td>Remco</td><td>€1.490</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">Is er nog mee bezig</td></tr>
+<tr><td><strong>Eline Kleinman</strong></td><td>Maart</td><td>Michel</td><td>€585</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">—</td></tr>
+
+    <tr style="background:#e3f2fd;font-weight:700;border-top:2px solid #1565c0">
+      <td colspan="3">Totaal</td><td>€20.525</td><td>📧 7x mail &nbsp; 📞 2x bellen</td><td></td>
+    </tr>
+    </tbody>
+  </table></div>
+
+  <div class="crow">
+    <div class="cc"><div class="ctitle">Mail vs bellen</div><div style="position:relative;height:230px"><canvas id="cNcMeth"></canvas></div></div>
+    <div class="cc"><div class="ctitle">Nieuwe bestellingen per maand</div><div style="position:relative;height:230px"><canvas id="cNcMnd"></canvas></div></div>
+  </div>
+
+  <div class="sec bl" style="margin-top:4px">Per adviseur</div>
+  <div class="scr"><table>
+    <thead><tr><th class="bl">Adviseur</th><th class="bl">Nieuwe best.</th><th class="bl">Extra waarde</th><th class="bl">Via mail</th><th class="bl">Via bellen</th></tr></thead>
+    <tbody><tr><td><strong>Ramon</strong></td><td>2</td><td>€4.553</td><td>📧 2</td><td>—</td></tr>
+<tr><td><strong>Torsten</strong></td><td>2</td><td>€7.170</td><td>📧 1</td><td>📞 1</td></tr>
+<tr><td><strong>Remco</strong></td><td>2</td><td>€2.625</td><td>📧 1</td><td>📞 1</td></tr>
+<tr><td><strong>Jeffrey</strong></td><td>1</td><td>€4.230</td><td>📧 1</td><td>—</td></tr>
+<tr><td><strong>Cristian</strong></td><td>1</td><td>€1.361</td><td>📧 1</td><td>—</td></tr>
+<tr><td><strong>Michel</strong></td><td>1</td><td>€585</td><td>📧 1</td><td>—</td></tr>
+</tbody>
+  </table></div>
+</div>
+<script>
+const O="#F59901",D="#2D2D2D",L="#F9CD92",P="#ce93d8",BL="#1565c0",PU="#9c27b0";
+const MAANDEN=["Januari", "Februari", "Maart", "April"];
+const ADV_NAMES=["Cristian", "Dennis", "Jeffrey", "Michel", "Peter", "Quinten", "Ramon", "Remco", "Torsten"];
+const MND={"Januari": {"ingemeten": 406, "besteld": 312, "niet": 94, "conv": 76.8, "waarde_in": 749006, "waarde_best": 557056, "conv_waarde": 74.4, "nabellen_benaderd": 91, "nabellen_besteld": 39, "nabellen_conv": 42.9, "redenen": {"Geen gehoor": 20, "Is er nog mee bezig": 16, "Ziet ervan af": 3, "Overig (reden plaatsen in blad 'redenen')": 3, "Gaat bestellen": 3, "Service": 2, "Wacht op korting": 2, "Elders goedkoper": 1, "Uitstel vanwege andere prioriteiten": 1, "Nogmaals meten": 1}, "bel_of_mail": {"Mail": 55, "Bellen": 39}}, "Februari": {"ingemeten": 509, "besteld": 370, "niet": 139, "conv": 72.7, "waarde_in": 891173, "waarde_best": 627690, "conv_waarde": 70.4, "nabellen_benaderd": 151, "nabellen_besteld": 52, "nabellen_conv": 34.4, "redenen": {"Geen gehoor": 55, "Is er nog mee bezig": 19, "Ziet ervan af": 7, "Overig (reden plaatsen in blad 'redenen')": 5, "Wacht op korting": 3, "Nogmaals meten": 2, "Gaat bestellen": 2, "Service": 2, "Elders goedkoper": 2, "Niet kunnen leveren wat de klant wil": 1}, "bel_of_mail": {"Mail": 136, "Bellen": 49}}, "Maart": {"ingemeten": 488, "besteld": 374, "niet": 114, "conv": 76.6, "waarde_in": 977644, "waarde_best": 740951, "conv_waarde": 75.8, "nabellen_benaderd": 135, "nabellen_besteld": 52, "nabellen_conv": 38.5, "redenen": {"Geen gehoor": 28, "Is er nog mee bezig": 27, "Ziet ervan af": 14, "Overig (reden plaatsen in blad 'redenen')": 7, "Elders goedkoper": 3, "Gaat bestellen": 1, "Nogmaals meten": 1, "Wacht op korting": 1, "Technisch (lege winkelwagen/ niet inloggen/ contact)": 1}, "bel_of_mail": {"Mail": 128, "Bellen": 47}}, "April": {"ingemeten": 473, "besteld": 308, "niet": 165, "conv": 65.1, "waarde_in": 865593, "waarde_best": 485367, "conv_waarde": 56.1, "nabellen_benaderd": 72, "nabellen_besteld": 8, "nabellen_conv": 11.1, "redenen": {"Geen gehoor": 31, "Is er nog mee bezig": 20, "Overig (reden plaatsen in blad 'redenen')": 4, "Ziet ervan af": 3, "Gaat bestellen": 2, "Uitstel vanwege andere prioriteiten": 2, "Wacht op korting": 1, "Nogmaals meten": 1}, "bel_of_mail": {"Mail": 76, "Bellen": 17}}};
+const ADV={"Cristian": {"Januari": {"ingemeten": 52, "besteld": 42, "niet": 10, "conv": 80.8, "waarde_in": 88840, "waarde_best": 77926, "conv_waarde": 87.7, "nabellen_benaderd": 16, "nabellen_besteld": 9, "nabellen_conv": 56.2, "provincies": {"Gelderland": {"i": 6, "b": 5, "c": 83.3}, "Noord-Brabant": {"i": 2, "b": 1, "c": 50.0}, "Overijssel": {"i": 2, "b": 2, "c": 100.0}, "Utrecht": {"i": 22, "b": 17, "c": 77.3}, "Zuid-Holland": {"i": 17, "b": 14, "c": 82.4}}, "redenen": {"Is er nog mee bezig": 3, "Overig (reden plaatsen in blad 'redenen')": 2, "Gaat bestellen": 1, "Geen gehoor": 1}}, "Februari": {"ingemeten": 72, "besteld": 59, "niet": 13, "conv": 81.9, "waarde_in": 122725, "waarde_best": 100244, "conv_waarde": 81.7, "nabellen_benaderd": 19, "nabellen_besteld": 10, "nabellen_conv": 52.6, "provincies": {"Gelderland": {"i": 5, "b": 3, "c": 60.0}, "Noord-Brabant": {"i": 22, "b": 17, "c": 77.3}, "Utrecht": {"i": 15, "b": 11, "c": 73.3}, "Zuid-Holland": {"i": 25, "b": 23, "c": 92.0}}, "redenen": {"Geen gehoor": 6, "Overig (reden plaatsen in blad 'redenen')": 1, "Technisch (lege winkelwagen/ niet inloggen/ contact)": 1, "Is er nog mee bezig": 1}}, "Maart": {"ingemeten": 61, "besteld": 48, "niet": 13, "conv": 78.7, "waarde_in": 106942, "waarde_best": 88336, "conv_waarde": 82.6, "nabellen_benaderd": 16, "nabellen_besteld": 7, "nabellen_conv": 43.8, "provincies": {"Gelderland": {"i": 2, "b": 2, "c": 100.0}, "Noord-Brabant": {"i": 14, "b": 10, "c": 71.4}, "Overijssel": {"i": 3, "b": 3, "c": 100.0}, "Utrecht": {"i": 15, "b": 12, "c": 80.0}, "Zuid-Holland": {"i": 22, "b": 17, "c": 77.3}}, "redenen": {"Is er nog mee bezig": 4, "Geen gehoor": 2, "Elders goedkoper": 1, "Overig (reden plaatsen in blad 'redenen')": 1, "Wacht op korting": 1}}, "April": {"ingemeten": 60, "besteld": 41, "niet": 19, "conv": 68.3, "waarde_in": 110748, "waarde_best": 71929, "conv_waarde": 64.9, "nabellen_benaderd": 10, "nabellen_besteld": 1, "nabellen_conv": 10.0, "provincies": {"Flevoland": {"i": 3, "b": 1, "c": 33.3}, "Gelderland": {"i": 7, "b": 5, "c": 71.4}, "Noord-Brabant": {"i": 16, "b": 13, "c": 81.2}, "Noord-Holland": {"i": 4, "b": 4, "c": 100.0}, "Overijssel": {"i": 7, "b": 6, "c": 85.7}, "Utrecht": {"i": 11, "b": 9, "c": 81.8}, "Zuid-Holland": {"i": 8, "b": 3, "c": 37.5}}, "redenen": {"Is er nog mee bezig": 4, "Geen gehoor": 3, "Gaat bestellen": 1, "Overig (reden plaatsen in blad 'redenen')": 1}}}, "Dennis": {"Januari": {"ingemeten": 42, "besteld": 36, "niet": 6, "conv": 85.7, "waarde_in": 83355, "waarde_best": 60802, "conv_waarde": 72.9, "nabellen_benaderd": 8, "nabellen_besteld": 3, "nabellen_conv": 37.5, "provincies": {"Gelderland": {"i": 16, "b": 14, "c": 87.5}, "Limburg": {"i": 1, "b": 1, "c": 100.0}, "Noord-Brabant": {"i": 4, "b": 4, "c": 100.0}, "Overijssel": {"i": 16, "b": 12, "c": 75.0}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}}, "redenen": {"Is er nog mee bezig": 2, "Uitstel vanwege andere prioriteiten": 1, "Nogmaals meten": 1, "Gaat bestellen": 1}}, "Februari": {"ingemeten": 46, "besteld": 31, "niet": 15, "conv": 67.4, "waarde_in": 78883, "waarde_best": 51594, "conv_waarde": 65.4, "nabellen_benaderd": 10, "nabellen_besteld": 3, "nabellen_conv": 30.0, "provincies": {"Flevoland": {"i": 1, "b": 1, "c": 100.0}, "Gelderland": {"i": 17, "b": 11, "c": 64.7}, "Limburg": {"i": 2, "b": 1, "c": 50.0}, "Noord-Brabant": {"i": 3, "b": 2, "c": 66.7}, "Overijssel": {"i": 16, "b": 13, "c": 81.2}, "Utrecht": {"i": 5, "b": 2, "c": 40.0}}, "redenen": {"Geen gehoor": 3, "Is er nog mee bezig": 2, "Niet kunnen leveren wat de klant wil": 1, "Overig (reden plaatsen in blad 'redenen')": 1}}, "Maart": {"ingemeten": 58, "besteld": 52, "niet": 6, "conv": 89.7, "waarde_in": 111819, "waarde_best": 103641, "conv_waarde": 92.7, "nabellen_benaderd": 11, "nabellen_besteld": 7, "nabellen_conv": 63.6, "provincies": {"Gelderland": {"i": 21, "b": 19, "c": 90.5}, "Overijssel": {"i": 34, "b": 31, "c": 91.2}}, "redenen": {"Is er nog mee bezig": 2, "Overig (reden plaatsen in blad 'redenen')": 1, "Ziet ervan af": 1}}, "April": {"ingemeten": 48, "besteld": 31, "niet": 17, "conv": 64.6, "waarde_in": 114727, "waarde_best": 56077, "conv_waarde": 48.9, "nabellen_benaderd": 11, "nabellen_besteld": 3, "nabellen_conv": 27.3, "provincies": {"Gelderland": {"i": 10, "b": 6, "c": 60.0}, "Noord-Holland": {"i": 2, "b": 2, "c": 100.0}, "Overijssel": {"i": 32, "b": 20, "c": 62.5}, "Utrecht": {"i": 3, "b": 2, "c": 66.7}}, "redenen": {"Geen gehoor": 4, "Is er nog mee bezig": 3, "Ziet ervan af": 1}}}, "Jeffrey": {"Januari": {"ingemeten": 18, "besteld": 13, "niet": 5, "conv": 72.2, "waarde_in": 35490, "waarde_best": 20097, "conv_waarde": 56.6, "nabellen_benaderd": 3, "nabellen_besteld": 0, "nabellen_conv": 0.0, "provincies": {"België": {"i": 5, "b": 3, "c": 60.0}, "Limburg": {"i": 6, "b": 5, "c": 83.3}, "Noord-Brabant": {"i": 4, "b": 4, "c": 100.0}}, "redenen": {"Geen gehoor": 2, "Service": 1}}, "Februari": {"ingemeten": 56, "besteld": 41, "niet": 15, "conv": 73.2, "waarde_in": 104847, "waarde_best": 68357, "conv_waarde": 65.2, "nabellen_benaderd": 20, "nabellen_besteld": 7, "nabellen_conv": 35.0, "provincies": {"België": {"i": 21, "b": 15, "c": 71.4}, "Gelderland": {"i": 1, "b": 0, "c": 0.0}, "Limburg": {"i": 21, "b": 16, "c": 76.2}, "Noord-Brabant": {"i": 11, "b": 9, "c": 81.8}, "Provincie Antwerpen": {"i": 1, "b": 1, "c": 100.0}}, "redenen": {"Geen gehoor": 9, "Wacht op korting": 1, "Ziet ervan af": 1, "Is er nog mee bezig": 1, "Overig (reden plaatsen in blad 'redenen')": 1}}, "Maart": {"ingemeten": 65, "besteld": 46, "niet": 19, "conv": 70.8, "waarde_in": 137477, "waarde_best": 100756, "conv_waarde": 73.3, "nabellen_benaderd": 18, "nabellen_besteld": 5, "nabellen_conv": 27.8, "provincies": {"België": {"i": 30, "b": 21, "c": 70.0}, "Limburg": {"i": 14, "b": 9, "c": 64.3}, "Noord-Brabant": {"i": 21, "b": 16, "c": 76.2}}, "redenen": {"Is er nog mee bezig": 5, "Ziet ervan af": 3, "Geen gehoor": 3, "Overig (reden plaatsen in blad 'redenen')": 2}}, "April": {"ingemeten": 63, "besteld": 45, "niet": 18, "conv": 71.4, "waarde_in": 85201, "waarde_best": 50832, "conv_waarde": 59.7, "nabellen_benaderd": 6, "nabellen_besteld": 0, "nabellen_conv": 0.0, "provincies": {"België": {"i": 22, "b": 13, "c": 59.1}, "Gelderland": {"i": 1, "b": 1, "c": 100.0}, "Limburg": {"i": 28, "b": 23, "c": 82.1}, "Noord-Brabant": {"i": 6, "b": 3, "c": 50.0}, "Overijssel": {"i": 1, "b": 1, "c": 100.0}, "nan": {"i": 2, "b": 1, "c": 50.0}}, "redenen": {"Geen gehoor": 5, "Is er nog mee bezig": 1}}}, "Michel": {"Januari": {"ingemeten": 28, "besteld": 20, "niet": 8, "conv": 71.4, "waarde_in": 47714, "waarde_best": 30948, "conv_waarde": 64.9, "nabellen_benaderd": 7, "nabellen_besteld": 3, "nabellen_conv": 42.9, "provincies": {"Drenthe": {"i": 2, "b": 2, "c": 100.0}, "Flevoland": {"i": 5, "b": 3, "c": 60.0}, "Frysl√¢n": {"i": 5, "b": 3, "c": 60.0}, "Gelderland": {"i": 2, "b": 0, "c": 0.0}, "Groningen": {"i": 2, "b": 2, "c": 100.0}, "Overijssel": {"i": 8, "b": 7, "c": 87.5}}, "redenen": {"Is er nog mee bezig": 2, "Wacht op korting": 1, "Geen gehoor": 1}}, "Februari": {"ingemeten": 40, "besteld": 29, "niet": 11, "conv": 72.5, "waarde_in": 69637, "waarde_best": 46576, "conv_waarde": 66.9, "nabellen_benaderd": 9, "nabellen_besteld": 3, "nabellen_conv": 33.3, "provincies": {"Drenthe": {"i": 3, "b": 1, "c": 33.3}, "Flevoland": {"i": 1, "b": 0, "c": 0.0}, "Frysl√¢n": {"i": 5, "b": 4, "c": 80.0}, "Gelderland": {"i": 6, "b": 5, "c": 83.3}, "Groningen": {"i": 4, "b": 4, "c": 100.0}, "Overijssel": {"i": 18, "b": 13, "c": 72.2}}, "redenen": {"Geen gehoor": 3, "Is er nog mee bezig": 2, "Nogmaals meten": 1}}, "Maart": {"ingemeten": 66, "besteld": 52, "niet": 14, "conv": 78.8, "waarde_in": 129152, "waarde_best": 98623, "conv_waarde": 76.4, "nabellen_benaderd": 15, "nabellen_besteld": 6, "nabellen_conv": 40.0, "provincies": {"Drenthe": {"i": 2, "b": 2, "c": 100.0}, "Flevoland": {"i": 8, "b": 6, "c": 75.0}, "Fryslân": {"i": 1, "b": 1, "c": 100.0}, "Frysl√¢n": {"i": 10, "b": 9, "c": 90.0}, "Gelderland": {"i": 4, "b": 4, "c": 100.0}, "Groningen": {"i": 3, "b": 3, "c": 100.0}, "Overijssel": {"i": 33, "b": 24, "c": 72.7}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}}, "redenen": {"Ziet ervan af": 3, "Is er nog mee bezig": 2, "Geen gehoor": 1, "Gaat bestellen": 1, "Elders goedkoper": 1, "Overig (reden plaatsen in blad 'redenen')": 1}}, "April": {"ingemeten": 62, "besteld": 42, "niet": 20, "conv": 67.7, "waarde_in": 123210, "waarde_best": 78156, "conv_waarde": 63.4, "nabellen_benaderd": 9, "nabellen_besteld": 1, "nabellen_conv": 11.1, "provincies": {"Drenthe": {"i": 3, "b": 2, "c": 66.7}, "Flevoland": {"i": 5, "b": 3, "c": 60.0}, "Fryslân": {"i": 11, "b": 7, "c": 63.6}, "Gelderland": {"i": 3, "b": 2, "c": 66.7}, "Groningen": {"i": 8, "b": 6, "c": 75.0}, "Noord-Holland": {"i": 4, "b": 3, "c": 75.0}, "Overijssel": {"i": 25, "b": 17, "c": 68.0}}, "redenen": {"Geen gehoor": 4, "Uitstel vanwege andere prioriteiten": 1, "Overig (reden plaatsen in blad 'redenen')": 1, "Wacht op korting": 1, "Is er nog mee bezig": 1}}}, "Peter": {"Januari": {"ingemeten": 51, "besteld": 38, "niet": 13, "conv": 74.5, "waarde_in": 97350, "waarde_best": 62104, "conv_waarde": 63.8, "nabellen_benaderd": 13, "nabellen_besteld": 4, "nabellen_conv": 30.8, "provincies": {"Gelderland": {"i": 16, "b": 11, "c": 68.8}, "Limburg": {"i": 4, "b": 4, "c": 100.0}, "Noord-Brabant": {"i": 15, "b": 13, "c": 86.7}, "Overijssel": {"i": 3, "b": 2, "c": 66.7}, "Utrecht": {"i": 7, "b": 4, "c": 57.1}, "Zuid-Holland": {"i": 4, "b": 2, "c": 50.0}}, "redenen": {"Geen gehoor": 6, "Elders goedkoper": 1, "Ziet ervan af": 1, "Is er nog mee bezig": 1}}, "Februari": {"ingemeten": 55, "besteld": 40, "niet": 15, "conv": 72.7, "waarde_in": 98231, "waarde_best": 71392, "conv_waarde": 72.7, "nabellen_benaderd": 16, "nabellen_besteld": 4, "nabellen_conv": 25.0, "provincies": {"Gelderland": {"i": 11, "b": 8, "c": 72.7}, "Noord-Brabant": {"i": 20, "b": 15, "c": 75.0}, "Noord-Holland": {"i": 5, "b": 2, "c": 40.0}, "Utrecht": {"i": 6, "b": 5, "c": 83.3}, "Zuid-Holland": {"i": 11, "b": 8, "c": 72.7}}, "redenen": {"Geen gehoor": 6, "Is er nog mee bezig": 3, "Ziet ervan af": 2, "Elders goedkoper": 1}}, "Maart": {"ingemeten": 59, "besteld": 43, "niet": 16, "conv": 72.9, "waarde_in": 115646, "waarde_best": 78625, "conv_waarde": 68.0, "nabellen_benaderd": 19, "nabellen_besteld": 5, "nabellen_conv": 26.3, "provincies": {"Gelderland": {"i": 24, "b": 16, "c": 66.7}, "Limburg": {"i": 1, "b": 1, "c": 100.0}, "Noord-Brabant": {"i": 8, "b": 7, "c": 87.5}, "Noord-Holland": {"i": 8, "b": 4, "c": 50.0}, "Overijssel": {"i": 4, "b": 4, "c": 100.0}, "Utrecht": {"i": 12, "b": 9, "c": 75.0}}, "redenen": {"Is er nog mee bezig": 6, "Geen gehoor": 4, "Elders goedkoper": 1, "Technisch (lege winkelwagen/ niet inloggen/ contact)": 1, "Overig (reden plaatsen in blad 'redenen')": 1, "Ziet ervan af": 1}}, "April": {"ingemeten": 43, "besteld": 26, "niet": 17, "conv": 60.5, "waarde_in": 75119, "waarde_best": 41188, "conv_waarde": 54.8, "nabellen_benaderd": 6, "nabellen_besteld": 0, "nabellen_conv": 0.0, "provincies": {"Gelderland": {"i": 10, "b": 6, "c": 60.0}, "Limburg": {"i": 1, "b": 0, "c": 0.0}, "Noord-Brabant": {"i": 8, "b": 5, "c": 62.5}, "Noord-Holland": {"i": 1, "b": 0, "c": 0.0}, "Overijssel": {"i": 6, "b": 5, "c": 83.3}, "Utrecht": {"i": 10, "b": 8, "c": 80.0}, "Zuid-Holland": {"i": 3, "b": 0, "c": 0.0}}, "redenen": {"Geen gehoor": 3, "Is er nog mee bezig": 3}}}, "Quinten": {"Januari": {"ingemeten": 48, "besteld": 34, "niet": 14, "conv": 70.8, "waarde_in": 84091, "waarde_best": 57716, "conv_waarde": 68.6, "nabellen_benaderd": 12, "nabellen_besteld": 5, "nabellen_conv": 41.7, "provincies": {"België": {"i": 1, "b": 1, "c": 100.0}, "Noord-Brabant": {"i": 16, "b": 12, "c": 75.0}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}, "Zeeland": {"i": 5, "b": 4, "c": 80.0}, "Zuid-Holland": {"i": 24, "b": 15, "c": 62.5}}, "redenen": {"Geen gehoor": 3, "Overig (reden plaatsen in blad 'redenen')": 1, "Ziet ervan af": 1, "Gaat bestellen": 1, "Is er nog mee bezig": 1}}, "Februari": {"ingemeten": 59, "besteld": 42, "niet": 17, "conv": 71.2, "waarde_in": 98364, "waarde_best": 62599, "conv_waarde": 63.6, "nabellen_benaderd": 20, "nabellen_besteld": 7, "nabellen_conv": 35.0, "provincies": {"België": {"i": 5, "b": 4, "c": 80.0}, "Noord-Brabant": {"i": 17, "b": 12, "c": 70.6}, "Zeeland": {"i": 6, "b": 5, "c": 83.3}, "Zuid-Holland": {"i": 26, "b": 17, "c": 65.4}}, "redenen": {"Geen gehoor": 9, "Gaat bestellen": 2, "Is er nog mee bezig": 1, "Service": 1}}, "Maart": {"ingemeten": 63, "besteld": 45, "niet": 18, "conv": 71.4, "waarde_in": 126202, "waarde_best": 86081, "conv_waarde": 68.2, "nabellen_benaderd": 22, "nabellen_besteld": 8, "nabellen_conv": 36.4, "provincies": {"België": {"i": 4, "b": 3, "c": 75.0}, "Noord-Brabant": {"i": 20, "b": 14, "c": 70.0}, "Zeeland": {"i": 3, "b": 1, "c": 33.3}, "Zuid-Holland": {"i": 34, "b": 27, "c": 79.4}}, "redenen": {"Geen gehoor": 8, "Ziet ervan af": 3, "Is er nog mee bezig": 2, "Nogmaals meten": 1}}, "April": {"ingemeten": 43, "besteld": 28, "niet": 15, "conv": 65.1, "waarde_in": 73255, "waarde_best": 44905, "conv_waarde": 61.3, "nabellen_benaderd": 7, "nabellen_besteld": 1, "nabellen_conv": 14.3, "provincies": {"België": {"i": 2, "b": 2, "c": 100.0}, "Noord-Brabant": {"i": 7, "b": 5, "c": 71.4}, "Utrecht": {"i": 1, "b": 0, "c": 0.0}, "Zeeland": {"i": 5, "b": 3, "c": 60.0}, "Zuid-Holland": {"i": 22, "b": 16, "c": 72.7}}, "redenen": {"Is er nog mee bezig": 2, "Geen gehoor": 2, "Overig (reden plaatsen in blad 'redenen')": 1, "Nogmaals meten": 1}}}, "Ramon": {"Januari": {"ingemeten": 82, "besteld": 73, "niet": 9, "conv": 89.0, "waarde_in": 158170, "waarde_best": 139542, "conv_waarde": 88.2, "nabellen_benaderd": 11, "nabellen_besteld": 7, "nabellen_conv": 63.6, "provincies": {"Drenthe": {"i": 5, "b": 5, "c": 100.0}, "Frysl√¢n": {"i": 3, "b": 3, "c": 100.0}, "Gelderland": {"i": 3, "b": 2, "c": 66.7}, "Groningen": {"i": 8, "b": 8, "c": 100.0}, "Overijssel": {"i": 62, "b": 54, "c": 87.1}}, "redenen": {"Is er nog mee bezig": 3, "Service": 1}}, "Februari": {"ingemeten": 80, "besteld": 63, "niet": 17, "conv": 78.8, "waarde_in": 147789, "waarde_best": 116798, "conv_waarde": 79.0, "nabellen_benaderd": 18, "nabellen_besteld": 7, "nabellen_conv": 38.9, "provincies": {"Drenthe": {"i": 1, "b": 1, "c": 100.0}, "Frysl√¢n": {"i": 5, "b": 3, "c": 60.0}, "Gelderland": {"i": 15, "b": 11, "c": 73.3}, "Groningen": {"i": 4, "b": 4, "c": 100.0}, "Overijssel": {"i": 52, "b": 43, "c": 82.7}}, "redenen": {"Geen gehoor": 4, "Wacht op korting": 2, "Ziet ervan af": 2, "Overig (reden plaatsen in blad 'redenen')": 1, "Service": 1, "Elders goedkoper": 1}}, "Maart": {"ingemeten": 39, "besteld": 30, "niet": 9, "conv": 76.9, "waarde_in": 104893, "waarde_best": 75604, "conv_waarde": 72.1, "nabellen_benaderd": 14, "nabellen_besteld": 5, "nabellen_conv": 35.7, "provincies": {"Drenthe": {"i": 6, "b": 4, "c": 66.7}, "Groningen": {"i": 7, "b": 6, "c": 85.7}, "Overijssel": {"i": 25, "b": 19, "c": 76.0}}, "redenen": {"Geen gehoor": 6, "Is er nog mee bezig": 2, "Overig (reden plaatsen in blad 'redenen')": 1}}, "April": {"ingemeten": 43, "besteld": 29, "niet": 14, "conv": 67.4, "waarde_in": 69496, "waarde_best": 44516, "conv_waarde": 64.1, "nabellen_benaderd": 2, "nabellen_besteld": 0, "nabellen_conv": 0.0, "provincies": {"Drenthe": {"i": 10, "b": 7, "c": 70.0}, "Fryslân": {"i": 4, "b": 2, "c": 50.0}, "Groningen": {"i": 2, "b": 1, "c": 50.0}, "Overijssel": {"i": 26, "b": 19, "c": 73.1}}, "redenen": {"Is er nog mee bezig": 1, "Ziet ervan af": 1}}}, "Remco": {"Januari": {"ingemeten": 48, "besteld": 28, "niet": 20, "conv": 58.3, "waarde_in": 84884, "waarde_best": 55811, "conv_waarde": 65.8, "nabellen_benaderd": 13, "nabellen_besteld": 6, "nabellen_conv": 46.2, "provincies": {"Flevoland": {"i": 2, "b": 1, "c": 50.0}, "Noord-Holland": {"i": 42, "b": 25, "c": 59.5}, "Utrecht": {"i": 1, "b": 0, "c": 0.0}, "Zuid-Holland": {"i": 3, "b": 2, "c": 66.7}}, "redenen": {"Geen gehoor": 4, "Is er nog mee bezig": 2, "Ziet ervan af": 1}}, "Februari": {"ingemeten": 50, "besteld": 37, "niet": 13, "conv": 74.0, "waarde_in": 78669, "waarde_best": 55222, "conv_waarde": 70.2, "nabellen_benaderd": 16, "nabellen_besteld": 5, "nabellen_conv": 31.2, "provincies": {"Flevoland": {"i": 4, "b": 2, "c": 50.0}, "Frysl√¢n": {"i": 1, "b": 1, "c": 100.0}, "Noord-Holland": {"i": 40, "b": 32, "c": 80.0}, "Zuid-Holland": {"i": 2, "b": 1, "c": 50.0}}, "redenen": {"Geen gehoor": 7, "Ziet ervan af": 1, "Is er nog mee bezig": 1, "Nogmaals meten": 1, "Overig (reden plaatsen in blad 'redenen')": 1}}, "Maart": {"ingemeten": 52, "besteld": 40, "niet": 12, "conv": 76.9, "waarde_in": 82548, "waarde_best": 63670, "conv_waarde": 77.1, "nabellen_benaderd": 14, "nabellen_besteld": 7, "nabellen_conv": 50.0, "provincies": {"Flevoland": {"i": 1, "b": 1, "c": 100.0}, "Gelderland": {"i": 3, "b": 3, "c": 100.0}, "Noord-Brabant": {"i": 3, "b": 2, "c": 66.7}, "Noord-Holland": {"i": 36, "b": 26, "c": 72.2}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}, "Zuid-Holland": {"i": 8, "b": 7, "c": 87.5}}, "redenen": {"Geen gehoor": 4, "Is er nog mee bezig": 2, "Ziet ervan af": 1}}, "April": {"ingemeten": 72, "besteld": 46, "niet": 26, "conv": 63.9, "waarde_in": 137871, "waarde_best": 74388, "conv_waarde": 54.0, "nabellen_benaderd": 14, "nabellen_besteld": 2, "nabellen_conv": 14.3, "provincies": {"Flevoland": {"i": 8, "b": 4, "c": 50.0}, "Gelderland": {"i": 5, "b": 5, "c": 100.0}, "Noord-Holland": {"i": 39, "b": 24, "c": 61.5}, "Overijssel": {"i": 1, "b": 1, "c": 100.0}, "Utrecht": {"i": 9, "b": 7, "c": 77.8}, "Zuid-Holland": {"i": 7, "b": 3, "c": 42.9}}, "redenen": {"Geen gehoor": 7, "Is er nog mee bezig": 3, "Ziet ervan af": 1, "Uitstel vanwege andere prioriteiten": 1}}}, "Torsten": {"Januari": {"ingemeten": 37, "besteld": 28, "niet": 9, "conv": 75.7, "waarde_in": 69110, "waarde_best": 52108, "conv_waarde": 75.4, "nabellen_benaderd": 8, "nabellen_besteld": 2, "nabellen_conv": 25.0, "provincies": {"Flevoland": {"i": 1, "b": 1, "c": 100.0}, "Noord-Holland": {"i": 7, "b": 4, "c": 57.1}, "Overijssel": {"i": 2, "b": 2, "c": 100.0}, "Utrecht": {"i": 12, "b": 9, "c": 75.0}, "Zuid-Holland": {"i": 12, "b": 11, "c": 91.7}}, "redenen": {"Geen gehoor": 3, "Is er nog mee bezig": 2, "Wacht op korting": 1}}, "Februari": {"ingemeten": 51, "besteld": 28, "niet": 23, "conv": 54.9, "waarde_in": 92028, "waarde_best": 54908, "conv_waarde": 59.7, "nabellen_benaderd": 23, "nabellen_besteld": 6, "nabellen_conv": 26.1, "provincies": {"Flevoland": {"i": 2, "b": 1, "c": 50.0}, "Frysl√¢n": {"i": 1, "b": 1, "c": 100.0}, "Gelderland": {"i": 7, "b": 2, "c": 28.6}, "Noord-Holland": {"i": 13, "b": 10, "c": 76.9}, "Overijssel": {"i": 11, "b": 5, "c": 45.5}, "Utrecht": {"i": 5, "b": 2, "c": 40.0}, "Zuid-Holland": {"i": 10, "b": 5, "c": 50.0}}, "redenen": {"Is er nog mee bezig": 8, "Geen gehoor": 8, "Ziet ervan af": 1}}, "Maart": {"ingemeten": 25, "besteld": 18, "niet": 7, "conv": 72.0, "waarde_in": 62965, "waarde_best": 45615, "conv_waarde": 72.4, "nabellen_benaderd": 6, "nabellen_besteld": 2, "nabellen_conv": 33.3, "provincies": {"Drenthe": {"i": 1, "b": 1, "c": 100.0}, "Flevoland": {"i": 3, "b": 2, "c": 66.7}, "Noord-Holland": {"i": 14, "b": 9, "c": 64.3}, "Overijssel": {"i": 1, "b": 1, "c": 100.0}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}, "Zuid-Holland": {"i": 5, "b": 4, "c": 80.0}}, "redenen": {"Ziet ervan af": 2, "Is er nog mee bezig": 2}}, "April": {"ingemeten": 39, "besteld": 20, "niet": 19, "conv": 51.3, "waarde_in": 75966, "waarde_best": 23376, "conv_waarde": 30.8, "nabellen_benaderd": 7, "nabellen_besteld": 0, "nabellen_conv": 0.0, "provincies": {"Gelderland": {"i": 2, "b": 0, "c": 0.0}, "Noord-Holland": {"i": 11, "b": 5, "c": 45.5}, "Overijssel": {"i": 9, "b": 5, "c": 55.6}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}, "Zuid-Holland": {"i": 14, "b": 9, "c": 64.3}}, "redenen": {"Geen gehoor": 3, "Is er nog mee bezig": 2, "Overig (reden plaatsen in blad 'redenen')": 1, "Gaat bestellen": 1}}}};
+const PROV={"Januari": {"België": {"i": 6, "b": 4, "c": 66.7}, "Drenthe": {"i": 7, "b": 7, "c": 100.0}, "Flevoland": {"i": 8, "b": 5, "c": 62.5}, "Frysl√¢n": {"i": 8, "b": 6, "c": 75.0}, "Gelderland": {"i": 43, "b": 32, "c": 74.4}, "Groningen": {"i": 10, "b": 10, "c": 100.0}, "Limburg": {"i": 11, "b": 10, "c": 90.9}, "Noord-Brabant": {"i": 41, "b": 34, "c": 82.9}, "Noord-Holland": {"i": 49, "b": 29, "c": 59.2}, "Overijssel": {"i": 93, "b": 79, "c": 84.9}, "Utrecht": {"i": 44, "b": 32, "c": 72.7}, "Zeeland": {"i": 5, "b": 4, "c": 80.0}, "Zuid-Holland": {"i": 60, "b": 44, "c": 73.3}}, "Februari": {"België": {"i": 26, "b": 19, "c": 73.1}, "Drenthe": {"i": 4, "b": 2, "c": 50.0}, "Flevoland": {"i": 8, "b": 4, "c": 50.0}, "Frysl√¢n": {"i": 12, "b": 9, "c": 75.0}, "Gelderland": {"i": 62, "b": 40, "c": 64.5}, "Groningen": {"i": 8, "b": 8, "c": 100.0}, "Limburg": {"i": 23, "b": 17, "c": 73.9}, "Noord-Brabant": {"i": 73, "b": 55, "c": 75.3}, "Noord-Holland": {"i": 58, "b": 44, "c": 75.9}, "Overijssel": {"i": 97, "b": 74, "c": 76.3}, "Provincie Antwerpen": {"i": 1, "b": 1, "c": 100.0}, "Utrecht": {"i": 31, "b": 20, "c": 64.5}, "Zeeland": {"i": 6, "b": 5, "c": 83.3}, "Zuid-Holland": {"i": 74, "b": 54, "c": 73.0}}, "Maart": {"België": {"i": 34, "b": 24, "c": 70.6}, "Drenthe": {"i": 9, "b": 7, "c": 77.8}, "Flevoland": {"i": 12, "b": 9, "c": 75.0}, "Fryslân": {"i": 1, "b": 1, "c": 100.0}, "Frysl√¢n": {"i": 10, "b": 9, "c": 90.0}, "Gelderland": {"i": 54, "b": 44, "c": 81.5}, "Groningen": {"i": 10, "b": 9, "c": 90.0}, "Limburg": {"i": 15, "b": 10, "c": 66.7}, "Noord-Brabant": {"i": 66, "b": 49, "c": 74.2}, "Noord-Holland": {"i": 58, "b": 39, "c": 67.2}, "Overijssel": {"i": 100, "b": 82, "c": 82.0}, "Utrecht": {"i": 30, "b": 24, "c": 80.0}, "Zeeland": {"i": 3, "b": 1, "c": 33.3}, "Zuid-Holland": {"i": 69, "b": 55, "c": 79.7}}, "April": {"België": {"i": 24, "b": 15, "c": 62.5}, "Drenthe": {"i": 13, "b": 9, "c": 69.2}, "Flevoland": {"i": 16, "b": 8, "c": 50.0}, "Fryslân": {"i": 15, "b": 9, "c": 60.0}, "Gelderland": {"i": 38, "b": 25, "c": 65.8}, "Groningen": {"i": 10, "b": 7, "c": 70.0}, "Limburg": {"i": 29, "b": 23, "c": 79.3}, "Noord-Brabant": {"i": 37, "b": 26, "c": 70.3}, "Noord-Holland": {"i": 61, "b": 38, "c": 62.3}, "Overijssel": {"i": 107, "b": 74, "c": 69.2}, "Utrecht": {"i": 35, "b": 27, "c": 77.1}, "Zeeland": {"i": 5, "b": 3, "c": 60.0}, "Zuid-Holland": {"i": 54, "b": 31, "c": 57.4}, "nan": {"i": 2, "b": 1, "c": 50.0}}, "Totaal": {"België": {"i": 90, "b": 62, "c": 68.9}, "Drenthe": {"i": 33, "b": 25, "c": 75.8}, "Flevoland": {"i": 44, "b": 26, "c": 59.1}, "Frysl√¢n": {"i": 30, "b": 24, "c": 80.0}, "Gelderland": {"i": 197, "b": 141, "c": 71.6}, "Groningen": {"i": 38, "b": 34, "c": 89.5}, "Limburg": {"i": 78, "b": 60, "c": 76.9}, "Noord-Brabant": {"i": 217, "b": 164, "c": 75.6}, "Noord-Holland": {"i": 226, "b": 150, "c": 66.4}, "Overijssel": {"i": 397, "b": 309, "c": 77.8}, "Utrecht": {"i": 140, "b": 103, "c": 73.6}, "Zeeland": {"i": 19, "b": 13, "c": 68.4}, "Zuid-Holland": {"i": 257, "b": 184, "c": 71.6}, "Provincie Antwerpen": {"i": 1, "b": 1, "c": 100.0}, "Fryslân": {"i": 16, "b": 10, "c": 62.5}, "nan": {"i": 2, "b": 1, "c": 50.0}}};
+const NC=[{"naam": "Danny Scholing", "ordernummer": "300439334", "maand": "Januari", "adviseur": "Ramon", "waarde": 2926.0, "contact": "Mail", "reden": "Is er nog mee bezig"}, {"naam": "Petra Krudde", "ordernummer": "300441858", "maand": "Februari", "adviseur": "Torsten", "waarde": 2713.0, "contact": "Mail", "reden": "Geen gehoor"}, {"naam": "Martijn Visser", "ordernummer": "300444033", "maand": "Februari", "adviseur": "Ramon", "waarde": 1627.0, "contact": "Mail", "reden": "Geen gehoor"}, {"naam": "Melanie De Graaf", "ordernummer": "300446616", "maand": "Maart", "adviseur": "Torsten", "waarde": 4457.9, "contact": "Bellen", "reden": "Geen gehoor"}, {"naam": "Olaf Corduwener", "ordernummer": "300449873", "maand": "Maart", "adviseur": "Jeffrey", "waarde": 4230.65, "contact": "Mail", "reden": ""}, {"naam": "Anneke Rietman", "ordernummer": "300452886", "maand": "Maart", "adviseur": "Cristian", "waarde": 1361.0, "contact": "Mail", "reden": "Geen gehoor"}, {"naam": "Asli Akyol", "ordernummer": "300451792", "maand": "Maart", "adviseur": "Remco", "waarde": 1135.0, "contact": "Bellen", "reden": "Overig (reden plaatsen in blad 'redenen')"}, {"naam": "Ingeborg Bloem", "ordernummer": "300454701", "maand": "Maart", "adviseur": "Remco", "waarde": 1490.0, "contact": "Mail", "reden": "Is er nog mee bezig"}, {"naam": "Eline Kleinman", "ordernummer": "300446160", "maand": "Maart", "adviseur": "Michel", "waarde": 585.0, "contact": "Mail", "reden": ""}];
+
+function showPage(id,el){
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
+  document.getElementById("page-"+id).classList.add("active");
+  el.classList.add("active");
+  if(id==="apr" && !_ic.cAprAdv) initAprCharts();
+  if(id==="nc" && !_ic.cNcMeth) initNcCharts();
+}
+
+// Main charts (always visible)
+var convVals=MAANDEN.map(function(m){return MND[m].conv;});
+var convColors=[O,O,O,PU];
+new Chart(document.getElementById("cConv"),{type:"bar",data:{labels:MAANDEN,datasets:[{data:convVals,backgroundColor:convColors,borderRadius:5},{label:"Q1 gem.",data:[75.4,75.4,75.4,75.4],type:"line",borderColor:"#aaa",borderDash:[5,3],backgroundColor:"transparent",pointRadius:0,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.raw+"%";}}}},scales:{y:{min:50,max:90,grid:{color:"#f0f0f0"},ticks:{callback:function(v){return v+"%";}}}}}});
+
+var wiVals=MAANDEN.map(function(m){return MND[m].waarde_in;});
+var wbVals=MAANDEN.map(function(m){return MND[m].waarde_best;});
+var wiColors=[L,L,L,"#e1bee7"];var wbColors=[O,O,O,PU];
+new Chart(document.getElementById("cWaarde"),{type:"bar",data:{labels:MAANDEN,datasets:[{label:"Ingemeten",data:wiVals,backgroundColor:wiColors},{label:"Besteld",data:wbVals,backgroundColor:wbColors}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:"#f0f0f0"},ticks:{callback:function(v){return "\u20AC"+Math.round(v/1000)+"k";}}}}}});
+
+var colors4=[O,D,L,P];
+new Chart(document.getElementById("cAdvConv"),{type:"bar",data:{labels:ADV_NAMES,datasets:MAANDEN.map(function(m,i){return{label:m,data:ADV_NAMES.map(function(a){return ADV[a][m]?ADV[a][m].conv:0;}),backgroundColor:colors4[i]};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){var a=ADV_NAMES[ctx.dataIndex],m=MAANDEN[ctx.datasetIndex],d=ADV[a][m];return d?m+": "+d.conv+"% ("+d.besteld+"/"+d.ingemeten+")":"";}}}}},scales:{x:{ticks:{autoSkip:false}},y:{min:35,max:100,grid:{color:"#f0f0f0"},ticks:{callback:function(v){return v+"%";}}}}};
+
+new Chart(document.getElementById("cAdvWaarde"),{type:"bar",data:{labels:ADV_NAMES,datasets:MAANDEN.map(function(m,i){return{label:m,data:ADV_NAMES.map(function(a){return ADV[a][m]?ADV[a][m].waarde_in:0;}),backgroundColor:colors4[i]};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{autoSkip:false}},y:{grid:{color:"#f0f0f0"},ticks:{callback:function(v){return "\u20AC"+Math.round(v/1000)+"k";}}}}}});
+
+// Provincie
+var _cP=null,_cPV=null;
+function gc(c){return c>=85?"#27ae60":c>=75?O:c>=65?"#f39c12":"#e74c3c";}
+function selProv(m,el){
+  document.querySelectorAll(".mbtn").forEach(function(b){b.classList.remove("active");});
+  el.classList.add("active");
+  var d=PROV[m];
+  document.getElementById("prov-title").textContent="Conversie % per provincie \u2014 "+m;
+  document.getElementById("prov-vol-title").textContent="Volume \u2014 "+m;
+  var s=Object.entries(d).sort(function(a,b){return b[1].c-a[1].c;});
+  var h=Math.max(280,s.length*40+60);
+  document.getElementById("prov-wrap").style.height=h+"px";
+  if(_cP){_cP.destroy();_cP=null;}
+  _cP=new Chart(document.getElementById("cProv"),{type:"bar",data:{labels:s.map(function(x){return x[0];}),datasets:[{data:s.map(function(x){return x[1].c;}),backgroundColor:s.map(function(x){return gc(x[1].c);})}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return s[ctx.dataIndex][1].c+"% ("+s[ctx.dataIndex][1].b+"/"+s[ctx.dataIndex][1].i+")";}}}}},scales:{x:{min:0,max:110,ticks:{callback:function(v){return v+"%";}},grid:{color:"#f0f0f0"}},y:{ticks:{autoSkip:false,font:{size:11}}}}}});
+  var vs=Object.entries(d).sort(function(a,b){return b[1].i-a[1].i;});
+  if(_cPV){_cPV.destroy();_cPV=null;}
+  _cPV=new Chart(document.getElementById("cProvVol"),{type:"bar",data:{labels:vs.map(function(x){return x[0];}),datasets:[{label:"Ingemeten",data:vs.map(function(x){return x[1].i;}),backgroundColor:L},{label:"Besteld",data:vs.map(function(x){return x[1].b;}),backgroundColor:O}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{autoSkip:false,maxRotation:45,font:{size:11}}},y:{grid:{color:"#f0f0f0"}}}}});
+  var tb=document.getElementById("provtb");tb.innerHTML="";
+  vs.forEach(function(x){var p=x[0],v=x[1];var cls=v.c>=75?"pg":v.c>=65?"po":"pr";tb.innerHTML+='<tr><td><strong>'+p+'</strong></td><td>'+v.i+'</td><td>'+v.b+'</td><td>'+(v.i-v.b)+'</td><td><span class="pill '+cls+'">'+v.c+'%</span></td></tr>';});
+
+selProv("Totaal",document.querySelector(".mbtn.active"));
+
+// Nabellen
+new Chart(document.getElementById("cNab"),{type:"bar",data:{labels:MAANDEN,datasets:[{label:"Nabellen conv%",data:MAANDEN.map(function(m){return MND[m].nabellen_conv;}),backgroundColor:[O,O,O,PU],borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){var m=MAANDEN[ctx.dataIndex];return ctx.raw+"% ("+MND[m].nabellen_besteld+"/"+MND[m].nabellen_benaderd+")";}}}}},scales:{y:{min:0,max:55,grid:{color:"#f0f0f0"},ticks:{callback:function(v){return v+"%";}}}}});
+
+var allRedenen={};MAANDEN.forEach(function(m){Object.entries(MND[m].redenen||{}).forEach(function(e){allRedenen[e[0]]=(allRedenen[e[0]]||0)+e[1];});});
+var redenSorted=Object.entries(allRedenen).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+new Chart(document.getElementById("cReden"),{type:"doughnut",data:{labels:redenSorted.map(function(x){return x[0].length>22?x[0].substring(0,22)+"...":x[0];}),datasets:[{data:redenSorted.map(function(x){return x[1];}),backgroundColor:["#2D2D2D","#F59901","#e74c3c","#95a5a6","#27ae60","#F9CD92","#9b59b6","#3498db"],borderWidth:2,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"right",labels:{font:{size:10},boxWidth:10}}}}});
+
+// Lazy init for April and NC
+var _ic={};
+function initAprCharts(){
+  _ic.cAprAdv=true;
+  var aprAdv=MAANDEN[3];var aprCols=ADV_NAMES.map(function(a){var c=ADV[a][aprAdv]?ADV[a][aprAdv].conv:0;return c>=70?"#27ae60":c>=60?O:c>=50?"#ff9800":"#ef5350";});
+  var q1refs=ADV_NAMES.map(function(a){var s=0,n=0;["Januari","Februari","Maart"].forEach(function(m){if(ADV[a][m]){s+=ADV[a][m].conv;n++;}});return n>0?Math.round(s/n*10)/10:74.6;});
+  new Chart(document.getElementById("cAprAdv"),{type:"bar",data:{labels:ADV_NAMES,datasets:[{label:"April",data:ADV_NAMES.map(function(a){return ADV[a][aprAdv]?ADV[a][aprAdv].conv:0;}),backgroundColor:aprCols,borderRadius:4},{label:"Q1 gem.",data:q1refs,backgroundColor:"rgba(45,45,45,0.2)",borderColor:D,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{boxWidth:12,font:{size:11}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+": "+ctx.raw+"%";}}}}}},scales:{x:{ticks:{autoSkip:false}},y:{min:30,max:100,grid:{color:"#f0f0f0"},ticks:{callback:function(v){return v+"%";}}}}});
+  var aprProv=PROV["April"]||{};var aprPS=Object.entries(aprProv).sort(function(a,b){return b[1].c-a[1].c;});
+  new Chart(document.getElementById("cAprProv"),{type:"bar",data:{labels:aprPS.map(function(x){return x[0];}),datasets:[{data:aprPS.map(function(x){return x[1].c;}),backgroundColor:aprPS.map(function(x){return gc(x[1].c);})}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return aprPS[ctx.dataIndex][1].c+"% ("+aprPS[ctx.dataIndex][1].b+"/"+aprPS[ctx.dataIndex][1].i+")";}}}}},scales:{x:{min:0,max:110,ticks:{callback:function(v){return v+"%";}},grid:{color:"#f0f0f0"}},y:{ticks:{autoSkip:false,font:{size:10}}}}});
+
+
+function initNcCharts(){
+  _ic.cNcMeth=true;
+  new Chart(document.getElementById("cNcMeth"),{type:"doughnut",data:{labels:["\u{1F4E7} Mail (7x)","\u{1F4DE} Bellen (2x)"],datasets:[{data:[7,2],backgroundColor:[BL,O],borderWidth:3,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{font:{size:12},boxWidth:12}}}}});
+  var nm={Januari:0,Februari:0,Maart:0};
+  NC.forEach(function(x){if(nm[x.maand]!==undefined)nm[x.maand]++;});
+  new Chart(document.getElementById("cNcMnd"),{type:"bar",data:{labels:Object.keys(nm),datasets:[{data:Object.values(nm),backgroundColor:BL,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:5,ticks:{stepSize:1},grid:{color:"#f0f0f0"}}}}});
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:#F9F7F4;color:#2D2D2D;font-size:14px}
+.hdr{background:#2D2D2D;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.brand{font-family:"DM Mono",monospace;font-size:16px;font-weight:500;color:#F59901}
+.hdr-right{display:flex;gap:8px;align-items:center}
+.badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-q1{background:#F59901;color:#2D2D2D}
+.badge-apr{background:#9c27b0;color:#fff}
+.tab-bar{background:#fff;border-bottom:1.5px solid #eee;display:flex;padding:0 24px;overflow-x:auto}
+.tab{padding:12px 18px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2.5px solid transparent;color:#999;white-space:nowrap;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none}
+.tab.active{color:#F59901;border-bottom-color:#F59901}
+.tab.t-apr{color:#9c27b0}.tab.t-apr.active{color:#9c27b0;border-bottom-color:#9c27b0}
+.tab.t-nc{color:#1565c0}.tab.t-nc.active{color:#1565c0;border-bottom-color:#1565c0}
+.tab:hover{color:#2D2D2D}
+.page{display:none;padding:24px 28px;max-width:1300px}
+.page.active{display:block}
+.sec{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#aaa;margin:22px 0 12px;display:flex;align-items:center;gap:8px}
+.sec::before{content:"";display:block;width:3px;height:14px;background:#F59901;border-radius:2px}
+.sec.bl::before{background:#1565c0}.sec.pu::before{background:#9c27b0}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:22px}
+.kpi{background:#fff;border-radius:12px;padding:15px 17px;border:1px solid #eee;position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:#eee}
+.kpi.acc::after{background:#F59901}.kpi.gd::after{background:#27ae60}
+.kpi.bl::after{background:#1565c0}.kpi.pu::after{background:#9c27b0}
+.kpi.rd::after{background:#e74c3c}
+.klabel{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kval{font-size:24px;font-weight:600;color:#2D2D2D;line-height:1.15}
+.ksub{font-size:11px;color:#bbb;margin-top:3px}
+.crow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.cc{background:#fff;border-radius:12px;padding:17px;border:1px solid #eee}
+.cc.full{grid-column:1/-1}
+.ctitle{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px;font-size:11px;color:#999}
+.legend span{display:flex;align-items:center;gap:4px}
+.dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:#2D2D2D;color:#fff;padding:8px 10px;text-align:left;font-size:11px;font-weight:500;letter-spacing:.3px}
+thead th.bl{background:#1565c0}
+thead th.pu{background:#9c27b0}
+tbody tr:nth-child(even){background:#fafafa}
+tbody tr:hover{background:#fff8ec}
+tbody td{padding:7px 10px;border-bottom:1px solid #f2f2f2}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.pg{background:#e8f5e9;color:#1b5e20}.po{background:#fff3e0;color:#e65100}
+.pr{background:#fce4ec;color:#ad1457}.pd{background:#2D2D2D;color:#F59901}
+.pa{background:#f3e5f5;color:#6a1b9a}
+.tr-tot td{border-top:2px solid #2D2D2D;background:#f4f4f4!important;font-weight:600}
+.tr-avg td{border-top:2px dashed #F59901;background:#fff8ec!important;font-weight:600}
+.tr-q1 td{border-top:1.5px solid #eee;background:#fafafa!important;font-weight:600}
+.scr{overflow-x:auto;margin-bottom:16px}
+.ibox{border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:10px;border-left:4px solid #F59901;background:#fff8ec}
+.ibox.bl{border-left-color:#1565c0;background:#e8f0fe}
+.ibox.warn{border-left-color:#e74c3c;background:#fdf0f0}
+.ibox.good{border-left-color:#27ae60;background:#f0fdf4}
+.ibox .it{font-weight:700;font-size:13px;margin-bottom:4px}
+.ibox p{font-size:12px;color:#555;line-height:1.6}
+.mbtn-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.mbtn{padding:5px 15px;border:1.5px solid #ddd;border-radius:20px;font-size:12px;cursor:pointer;background:#fff;color:#555;font-weight:600;transition:all .15s}
+.mbtn.active{background:#2D2D2D;color:#F59901;border-color:#2D2D2D}
+.nc-banner{background:#e3f2fd;border:1.5px solid #1565c0;border-radius:12px;padding:16px 20px;margin-bottom:22px;display:flex;align-items:flex-start;gap:14px}
+.nc-banner .icon{font-size:28px;line-height:1}
+.nc-banner .text{font-size:13px;color:#1565c0}
+.nc-banner strong{font-size:18px;display:block;color:#0d47a1;margin-bottom:3px}
+small{color:#aaa;font-size:10px}
+@media(max-width:680px){.crow{grid-template-columns:1fr}.page{padding:14px 12px}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="brand">raamdecoratie.com</div>
+  <div class="hdr-right">
+    <span class="badge badge-q1">Q1 2026</span>
+    <span class="badge badge-apr">+ April 2026</span>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active" onclick="showPage('ov',this)">📊 Overzicht</button>
+  <button class="tab" onclick="showPage('adv',this)">👤 Adviseurs</button>
+  <button class="tab" onclick="showPage('prov',this)">🗺️ Provincie</button>
+  <button class="tab" onclick="showPage('regio',this)">📍 Adv. per regio</button>
+  <button class="tab" onclick="showPage('nab',this)">📞 Nabellen</button>
+  <button class="tab t-apr" onclick="showPage('apr',this)">🟣 April detail</button>
+  <button class="tab t-nc" onclick="showPage('nc',this)">🆕 Nieuwe bestellingen</button>
+</div>
+
+<div class="page active" id="page-ov">
+  <div class="sec">Totaal Q1 + April 2026 (excl. Kevin)</div>
+  <div class="kgrid">
+    <div class="kpi acc"><div class="klabel">Totaal ingemeten</div><div class="kval">1,876</div><div class="ksub">Jan t/m Apr</div></div>
+    <div class="kpi acc"><div class="klabel">Totaal besteld</div><div class="kval">1,364</div><div class="ksub">van 1,876 metingen</div></div>
+    <div class="kpi gd"><div class="klabel">Conversie totaal</div><div class="kval">72.7%</div><div class="ksub">besteld / ingemeten</div></div>
+    <div class="kpi"><div class="klabel">Waarde ingemeten</div><div class="kval" style="font-size:19px">€3.483.416</div><div class="ksub">Jan t/m Apr</div></div>
+    <div class="kpi"><div class="klabel">Waarde besteld</div><div class="kval" style="font-size:19px">€2.411.064</div><div class="ksub">Jan t/m Apr</div></div>
+    <div class="kpi rd"><div class="klabel">April conversie</div><div class="kval" style="color:#e74c3c">65.1%</div><div class="ksub">▼ 10.3 ppt vs Q1 gem</div></div>
+  </div>
+
+  <div class="ibox warn">
+    <div class="it">⚠️ April conversie daalt naar 65.1% — 10.3 ppt onder Q1 gemiddelde (75.4%)</div>
+    <p>Van 473 metingen zijn er 165 niet besteld. Torsten scoort het laagst in april (51,3%), gevolgd door Peter (60,5%). Jeffrey scoort het sterkst in april (71,4%). Gerichte opvolging in mei is gewenst.</p>
+  </div>
+
+  <div class="crow">
+    <div class="cc">
+      <div class="ctitle">Conversie% per maand</div>
+      <div class="legend">
+        <span><span class="dot" style="background:#F59901"></span>Q1 maanden</span>
+        <span><span class="dot" style="background:#9c27b0"></span>April</span>
+        <span><span class="dot" style="border:1.5px dashed #aaa;background:transparent"></span>Q1 gem. 75.4%</span>
+      </div>
+      <div style="position:relative;height:240px"><canvas id="cConv"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="ctitle">Waarde ingemeten vs besteld (€)</div>
+      <div class="legend"><span><span class="dot" style="background:#F9CD92"></span>Ingemeten</span><span><span class="dot" style="background:#F59901"></span>Besteld</span></div>
+      <div style="position:relative;height:240px"><canvas id="cWaarde"></canvas></div>
+    </div>
+  </div>
+
+  <div class="sec">Maandoverzicht</div>
+  <div class="scr"><table>
+    <thead><tr><th>Maand</th><th>Ingemeten</th><th>Besteld</th><th>Niet best.</th><th>Conv%</th><th>Waarde ing.</th><th>Waarde best.</th><th>Conv%€</th></tr></thead>
+    <tbody>
+      <tr><td>Januari</td><td>406</td><td>312</td><td>94</td><td><span class="pill pg">76.8%</span></td><td>€749.006</td><td>€557.056</td><td>74.4%</td></tr><tr><td>Februari</td><td>509</td><td>370</td><td>139</td><td><span class="pill po">72.7%</span></td><td>€891.173</td><td>€627.690</td><td>70.4%</td></tr><tr><td>Maart</td><td>488</td><td>374</td><td>114</td><td><span class="pill pg">76.6%</span></td><td>€977.644</td><td>€740.951</td><td>75.8%</td></tr><tr><td>April <span style="font-size:10px;background:#f3e5f5;color:#6a1b9a;padding:1px 6px;border-radius:10px;font-weight:700">NIEUW</span></td><td>473</td><td>308</td><td>165</td><td><span class="pill pa">65.1%</span></td><td>€865.593</td><td>€485.367</td><td>56.1%</td></tr>
+      <tr class="tr-q1"><td>Q1 subtotaal</td><td>1403</td><td>1056</td><td>347</td><td><span class="pill pd">75.3%</span></td><td>€2.617.823</td><td>€1.925.697</td><td>73.6%</td></tr>
+      <tr class="tr-tot"><td><strong>Totaal</strong></td><td>1876</td><td>1364</td><td>512</td><td><span class="pill pd">72.7%</span></td><td>€3.483.416</td><td>€2.411.064</td><td>69.2%</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<div class="page" id="page-adv">
+  <div class="sec">Conversie per adviseur — Q1 + April (getallen zichtbaar)</div>
+  <div class="crow"><div class="cc full">
+    <div class="ctitle">Conversie% per adviseur per maand — labels tonen besteld/ingemeten bij hover</div>
+    <div class="legend">
+      <span><span class="dot" style="background:#F59901"></span>Jan</span>
+      <span><span class="dot" style="background:#2D2D2D"></span>Feb</span>
+      <span><span class="dot" style="background:#F9CD92"></span>Mrt</span>
+      <span><span class="dot" style="background:#ce93d8"></span>Apr</span>
+    </div>
+    <div style="position:relative;height:360px"><canvas id="cAdvConv"></canvas></div>
+  </div></div>
+
+  <div class="sec">Detailtabel — alle 4 maanden + totaal</div>
+  <div class="scr"><table>
+    <thead>
+      <tr>
+        <th>Adviseur</th>
+        <th>Jan ing.</th><th>Jan best.</th><th>Jan%</th>
+        <th>Feb ing.</th><th>Feb best.</th><th>Feb%</th>
+        <th>Mrt ing.</th><th>Mrt best.</th><th>Mrt%</th>
+        <th class="pu">Apr ing.</th><th class="pu">Apr best.</th><th class="pu">Apr%</th>
+        <th class="bl">Totaal</th><th class="bl">%</th>
+      </tr>
+    </thead>
+    <tbody><tr><td><strong>Cristian</strong></td><td>52</td><td>42</td><td><span class="pill pg">80.8%</span></td><td>72</td><td>59</td><td><span class="pill pg">81.9%</span></td><td>61</td><td>48</td><td><span class="pill pg">78.7%</span></td><td>60</td><td>41</td><td><span class="pill pg">68.3%</span></td><td>190/245</td><td><span class="pill pd">77.6%</span></td></tr>
+<tr><td><strong>Dennis</strong></td><td>42</td><td>36</td><td><span class="pill pg">85.7%</span></td><td>46</td><td>31</td><td><span class="pill po">67.4%</span></td><td>58</td><td>52</td><td><span class="pill pg">89.7%</span></td><td>48</td><td>31</td><td><span class="pill pr">64.6%</span></td><td>150/194</td><td><span class="pill pd">77.3%</span></td></tr>
+<tr><td><strong>Jeffrey</strong></td><td>18</td><td>13</td><td><span class="pill po">72.2%</span></td><td>56</td><td>41</td><td><span class="pill pg">73.2%</span></td><td>65</td><td>46</td><td><span class="pill po">70.8%</span></td><td>63</td><td>45</td><td><span class="pill pg">71.4%</span></td><td>145/202</td><td><span class="pill pd">71.8%</span></td></tr>
+<tr><td><strong>Michel</strong></td><td>28</td><td>20</td><td><span class="pill po">71.4%</span></td><td>40</td><td>29</td><td><span class="pill po">72.5%</span></td><td>66</td><td>52</td><td><span class="pill pg">78.8%</span></td><td>62</td><td>42</td><td><span class="pill pg">67.7%</span></td><td>143/196</td><td><span class="pill pd">73.0%</span></td></tr>
+<tr><td><strong>Peter</strong></td><td>51</td><td>38</td><td><span class="pill po">74.5%</span></td><td>55</td><td>40</td><td><span class="pill pg">72.7%</span></td><td>59</td><td>43</td><td><span class="pill po">72.9%</span></td><td>43</td><td>26</td><td><span class="pill pr">60.5%</span></td><td>147/208</td><td><span class="pill pd">70.7%</span></td></tr>
+<tr><td><strong>Quinten</strong></td><td>48</td><td>34</td><td><span class="pill po">70.8%</span></td><td>59</td><td>42</td><td><span class="pill po">71.2%</span></td><td>63</td><td>45</td><td><span class="pill po">71.4%</span></td><td>43</td><td>28</td><td><span class="pill pg">65.1%</span></td><td>149/213</td><td><span class="pill pd">70.0%</span></td></tr>
+<tr><td><strong>Ramon</strong></td><td>82</td><td>73</td><td><span class="pill pg">89.0%</span></td><td>80</td><td>63</td><td><span class="pill pg">78.8%</span></td><td>39</td><td>30</td><td><span class="pill pg">76.9%</span></td><td>43</td><td>29</td><td><span class="pill pg">67.4%</span></td><td>195/244</td><td><span class="pill pd">79.9%</span></td></tr>
+<tr><td><strong>Remco</strong></td><td>48</td><td>28</td><td><span class="pill pr">58.3%</span></td><td>50</td><td>37</td><td><span class="pill pg">74.0%</span></td><td>52</td><td>40</td><td><span class="pill pg">76.9%</span></td><td>72</td><td>46</td><td><span class="pill pr">63.9%</span></td><td>151/222</td><td><span class="pill pd">68.0%</span></td></tr>
+<tr><td><strong>Torsten</strong></td><td>37</td><td>28</td><td><span class="pill po">75.7%</span></td><td>51</td><td>28</td><td><span class="pill pr">54.9%</span></td><td>25</td><td>18</td><td><span class="pill po">72.0%</span></td><td>39</td><td>20</td><td><span class="pill pr">51.3%</span></td><td>94/152</td><td><span class="pill pd">61.8%</span></td></tr>
+<tr class="tr-avg"><td><strong>Team gem.</strong></td><td>406</td><td>312</td><td><span class="pill pd">76.8%</span></td><td>509</td><td>370</td><td><span class="pill pd">72.7%</span></td><td>488</td><td>374</td><td><span class="pill pd">76.6%</span></td><td>473</td><td>308</td><td><span class="pill pd">65.1%</span></td><td>1364/1876</td><td><span class="pill pd">72.7%</span></td></tr>
+</tbody>
+  </table></div>
+
+  <div class="sec" style="margin-top:22px">Gemiddelde per maand — benchmark</div>
+  <div class="scr"><table>
+    <thead><tr><th>Maand</th><th>Team gem.</th><th>Hoogst</th><th>Laagst</th><th>Spreiding</th></tr></thead>
+    <tbody>
+<tr><td>Januari</td><td><span class="pill pg">76.8%</span></td><td>Ramon 89.0%</td><td>Remco 58.3%</td><td>30.7 ppt</td></tr>
+<tr><td>Februari</td><td><span class="pill po">72.7%</span></td><td>Cristian 81.9%</td><td>Torsten 54.9%</td><td>27.0 ppt</td></tr>
+<tr><td>Maart</td><td><span class="pill pg">76.6%</span></td><td>Dennis 89.7%</td><td>Jeffrey 70.8%</td><td>18.9 ppt</td></tr>
+<tr><td>April</td><td><span class="pill pa">65.1%</span></td><td>Jeffrey 71.4%</td><td>Torsten 51.3%</td><td>20.1 ppt</td></tr>
+<tr class="tr-avg"><td>Q1+Apr totaal</td><td><span class="pill pd">72.7%</span></td><td>Ramon 79.9%</td><td>Torsten 61.8%</td><td>18.1 ppt</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="sec" style="margin-top:22px">Inmeet waarde per adviseur per maand (€)</div>
+  <div class="crow"><div class="cc full">
+    <div class="ctitle">Ingemeten waarde per adviseur</div>
+    <div class="legend"><span><span class="dot" style="background:#F59901"></span>Jan</span><span><span class="dot" style="background:#2D2D2D"></span>Feb</span><span><span class="dot" style="background:#F9CD92"></span>Mrt</span><span><span class="dot" style="background:#ce93d8"></span>Apr</span></div>
+    <div style="position:relative;height:320px"><canvas id="cAdvWaarde"></canvas></div>
+  </div></div>
+</div>
+
+<div class="page" id="page-prov">
+  <div class="sec">Provincie — selecteer periode</div>
+  <div class="mbtn-bar">
+    <button class="mbtn" onclick="selProv("Januari",this)">Januari</button>
+    <button class="mbtn" onclick="selProv("Februari",this)">Februari</button>
+    <button class="mbtn" onclick="selProv("Maart",this)">Maart</button>
+    <button class="mbtn t-apr" onclick="selProv("April",this)">April</button>
+    <button class="mbtn active" onclick="selProv("Totaal",this)">Q1+Apr Totaal</button>
+  </div>
+  <div class="crow"><div class="cc full">
+    <div class="ctitle" id="prov-title">Conversie % per provincie — Q1+Apr Totaal</div>
+    <div style="position:relative;" id="prov-wrap"><canvas id="cProv"></canvas></div>
+  </div></div>
+  <div class="crow"><div class="cc full">
+    <div class="ctitle" id="prov-vol-title">Volume — Q1+Apr Totaal</div>
+    <div class="legend"><span><span class="dot" style="background:#F9CD92"></span>Ingemeten</span><span><span class="dot" style="background:#F59901"></span>Besteld</span></div>
+    <div style="position:relative;height:380px"><canvas id="cProvVol"></canvas></div>
+  </div></div>
+  <div class="scr"><table>
+    <thead><tr><th>Provincie</th><th>Ingemeten</th><th>Besteld</th><th>Niet besteld</th><th>Conversie</th></tr></thead>
+    <tbody id="provtb"></tbody>
+  </table></div>
+</div>
+
+<div class="page" id="page-regio">
+  <div class="sec">Heatmap — conversie per adviseur per provincie (Q1+Apr totaal)</div>
+  <p style="font-size:11px;color:#999;margin-bottom:12px">Groen ≥85% · Lichtgroen ≥75% · Oranje ≥65% · Rood &lt;65% · — = &lt;3 metingen</p>
+  <div class="scr"><table>
+    <thead><tr><th>Provincie</th><th>Totaal</th><th>Cristian</th><th>Dennis</th><th>Jeffrey</th><th>Michel</th><th>Peter</th><th>Quinten</th><th>Ramon</th><th>Remco</th><th>Torsten</th></tr></thead>
+    <tbody><tr><td><strong>Overijssel</strong></td><td><span class="pill po">77.8%</span><br><small style="color:#aaa">309/397</small></td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">91.7%</strong><br><small style="color:#aaa">11/12</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">77.6%</strong><br><small style="color:#aaa">76/98</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">72.6%</strong><br><small style="color:#aaa">61/84</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">84.6%</strong><br><small style="color:#aaa">11/13</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">81.8%</strong><br><small style="color:#aaa">135/165</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">56.5%</strong><br><small style="color:#aaa">13/23</small></td></tr>
+<tr><td><strong>Zuid-Holland</strong></td><td><span class="pill po">71.6%</span><br><small style="color:#aaa">184/257</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">79.2%</strong><br><small style="color:#aaa">57/72</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">55.6%</strong><br><small style="color:#aaa">10/18</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">70.8%</strong><br><small style="color:#aaa">75/106</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">65.0%</strong><br><small style="color:#aaa">13/20</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">70.7%</strong><br><small style="color:#aaa">29/41</small></td></tr>
+<tr><td><strong>Noord-Holland</strong></td><td><span class="pill pr">66.4%</span><br><small style="color:#aaa">150/226</small></td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">100.0%</strong><br><small style="color:#aaa">4/4</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">75.0%</strong><br><small style="color:#aaa">3/4</small></td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">42.9%</strong><br><small style="color:#aaa">6/14</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">68.2%</strong><br><small style="color:#aaa">107/157</small></td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">62.2%</strong><br><small style="color:#aaa">28/45</small></td></tr>
+<tr><td><strong>Noord-Brabant</strong></td><td><span class="pill po">75.6%</span><br><small style="color:#aaa">164/217</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">75.9%</strong><br><small style="color:#aaa">41/54</small></td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">85.7%</strong><br><small style="color:#aaa">6/7</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">76.2%</strong><br><small style="color:#aaa">32/42</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">78.4%</strong><br><small style="color:#aaa">40/51</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">71.7%</strong><br><small style="color:#aaa">43/60</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">66.7%</strong><br><small style="color:#aaa">2/3</small></td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Gelderland</strong></td><td><span class="pill po">71.6%</span><br><small style="color:#aaa">141/197</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">75.0%</strong><br><small style="color:#aaa">15/20</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">78.1%</strong><br><small style="color:#aaa">50/64</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">73.3%</strong><br><small style="color:#aaa">11/15</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">67.2%</strong><br><small style="color:#aaa">41/61</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">72.2%</strong><br><small style="color:#aaa">13/18</small></td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">100.0%</strong><br><small style="color:#aaa">8/8</small></td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">22.2%</strong><br><small style="color:#aaa">2/9</small></td></tr>
+<tr><td><strong>Utrecht</strong></td><td><span class="pill po">73.6%</span><br><small style="color:#aaa">103/140</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">77.8%</strong><br><small style="color:#aaa">49/63</small></td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">55.6%</strong><br><small style="color:#aaa">5/9</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">74.3%</strong><br><small style="color:#aaa">26/35</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">72.7%</strong><br><small style="color:#aaa">8/11</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">68.4%</strong><br><small style="color:#aaa">13/19</small></td></tr>
+<tr><td><strong>België</strong></td><td><span class="pill pr">68.9%</span><br><small style="color:#aaa">62/90</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">66.7%</strong><br><small style="color:#aaa">52/78</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">83.3%</strong><br><small style="color:#aaa">10/12</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Limburg</strong></td><td><span class="pill po">76.9%</span><br><small style="color:#aaa">60/78</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">66.7%</strong><br><small style="color:#aaa">2/3</small></td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">76.8%</strong><br><small style="color:#aaa">53/69</small></td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">83.3%</strong><br><small style="color:#aaa">5/6</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Flevoland</strong></td><td><span class="pill pr">59.1%</span><br><small style="color:#aaa">26/44</small></td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">33.3%</strong><br><small style="color:#aaa">1/3</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">63.2%</strong><br><small style="color:#aaa">12/19</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">53.3%</strong><br><small style="color:#aaa">8/15</small></td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">66.7%</strong><br><small style="color:#aaa">4/6</small></td></tr>
+<tr><td><strong>Groningen</strong></td><td><span class="pill pg">89.5%</span><br><small style="color:#aaa">34/38</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">88.2%</strong><br><small style="color:#aaa">15/17</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#27ae6022;text-align:center"><strong style="color:#27ae60">90.5%</strong><br><small style="color:#aaa">19/21</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Drenthe</strong></td><td><span class="pill po">75.8%</span><br><small style="color:#aaa">25/33</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">70.0%</strong><br><small style="color:#aaa">7/10</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">77.3%</strong><br><small style="color:#aaa">17/22</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Frysl√¢n</strong></td><td><span class="pill pg">80.0%</span><br><small style="color:#aaa">24/30</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">80.0%</strong><br><small style="color:#aaa">16/20</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#8bc34a22;text-align:center"><strong style="color:#8bc34a">75.0%</strong><br><small style="color:#aaa">6/8</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Zeeland</strong></td><td><span class="pill pr">68.4%</span><br><small style="color:#aaa">13/19</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">68.4%</strong><br><small style="color:#aaa">13/19</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+<tr><td><strong>Fryslân</strong></td><td><span class="pill pr">62.5%</span><br><small style="color:#aaa">10/16</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ff980022;text-align:center"><strong style="color:#ff9800">66.7%</strong><br><small style="color:#aaa">8/12</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td><td style="background:#ef535022;text-align:center"><strong style="color:#ef5350">50.0%</strong><br><small style="color:#aaa">2/4</small></td><td style="color:#ddd;text-align:center">—</td><td style="color:#ddd;text-align:center">—</td></tr>
+</tbody>
+  </table></div>
+  <div class="sec" style="margin-top:22px">Conclusies</div>
+  <div class="ibox good"><div class="it">Ramon — dominant in Overijssel (85%+ Q1, stabiel in April)</div><p>Ramon scoort structureel het hoogst in Overijssel. Zijn aanpak is de benchmark voor deze regio.</p></div>
+  <div class="ibox good"><div class="it">Jeffrey — sterkste april prestatie (71,4%) en best in Limburg + België</div><p>Jeffrey is de enige adviseur die zijn Q1-niveau bijna vasthoudt in april. In Limburg scoort hij structureel boven 75%.</p></div>
+  <div class="ibox warn"><div class="it">Torsten — zwakste performer in Q1+Apr (laagste totaalconversie)</div><p>Dips in Gelderland (feb: 28,6%) en Overijssel (feb: 45,5%), april overall 51,3%. Coaching en regio-analyse gewenst.</p></div>
+  <div class="ibox warn"><div class="it">Noord-Holland — consequent laagste provincie (65-68%)</div><p>Remco, Peter en Torsten rijden hier. Allen scoren onder hun eigen gemiddelde in deze regio. Hogere prijsgevoeligheid of meer concurrentie mogelijk.</p></div>
+  <div class="ibox warn"><div class="it">April-dip zichtbaar bij alle adviseurs — Flevoland, Zeeland en Zuid-Holland dalen het hardst</div><p>Flevoland daalt naar 50%, Zeeland naar 33,3%, Zuid-Holland naar 53,7% in april. Dit zijn regio's om prioriteit aan te geven in mei.</p></div>
+</div>
+
+<div class="page" id="page-nab">
+  <div class="sec">Nabellen — Q1+April overzicht</div>
+  <div class="kgrid">
+    <div class="kpi"><div class="klabel">Jan nabellen conv.</div><div class="kval">42.9%</div><div class="ksub">39/91</div></div>
+    <div class="kpi"><div class="klabel">Feb nabellen conv.</div><div class="kval">34.4%</div><div class="ksub">52/151</div></div>
+    <div class="kpi"><div class="klabel">Mrt nabellen conv.</div><div class="kval">38.5%</div><div class="ksub">52/135</div></div>
+    <div class="kpi pu"><div class="klabel">Apr nabellen conv.</div><div class="kval" style="color:#9c27b0">11.1%</div><div class="ksub">8/72</div></div>
+  </div>
+  <div class="ibox" style="margin-bottom:16px">
+    <div class="it">ℹ️ April nabellen staat nog in de beginfase</div>
+    <p>De april metingen zijn recent gedaan — het nabellen loopt door in mei. Verwacht hogere conversies bij de volgende meting. Q1 nabellen conversie gemiddeld ~37%.</p>
+  </div>
+  <div class="crow">
+    <div class="cc"><div class="ctitle">Nabellen conversie per maand</div>
+    <div style="position:relative;height:240px"><canvas id="cNab"></canvas></div></div>
+    <div class="cc"><div class="ctitle">Redenen geen bestelling — totaal Q1+Apr</div>
+    <div style="position:relative;height:240px"><canvas id="cReden"></canvas></div></div>
+  </div>
+  <div class="sec">Redenen per maand</div>
+  <div class="scr"><table>
+    <thead><tr><th>Reden</th><th>Januari</th><th>Februari</th><th>Maart</th><th class="pu">April</th><th>Totaal</th></tr></thead>
+    <tbody><tr><td>Geen gehoor</td><td>20</td><td>55</td><td>28</td><td>31</td><td><strong>134</strong></td></tr>
+<tr><td>Is er nog mee bezig</td><td>16</td><td>19</td><td>27</td><td>20</td><td><strong>82</strong></td></tr>
+<tr><td>Ziet ervan af</td><td>3</td><td>7</td><td>14</td><td>3</td><td><strong>27</strong></td></tr>
+<tr><td>Overig (reden plaatsen in blad 'redenen')</td><td>3</td><td>5</td><td>7</td><td>4</td><td><strong>19</strong></td></tr>
+<tr><td>Gaat bestellen</td><td>3</td><td>2</td><td>1</td><td>2</td><td><strong>8</strong></td></tr>
+<tr><td>Wacht op korting</td><td>2</td><td>3</td><td>1</td><td>1</td><td><strong>7</strong></td></tr>
+<tr><td>Elders goedkoper</td><td>1</td><td>2</td><td>3</td><td>0</td><td><strong>6</strong></td></tr>
+<tr><td>Nogmaals meten</td><td>1</td><td>2</td><td>1</td><td>1</td><td><strong>5</strong></td></tr>
+<tr><td>Service</td><td>2</td><td>2</td><td>0</td><td>0</td><td><strong>4</strong></td></tr>
+<tr><td>Uitstel vanwege andere prioriteiten</td><td>1</td><td>0</td><td>0</td><td>2</td><td><strong>3</strong></td></tr>
+<tr><td>Niet kunnen leveren wat de klant wil</td><td>0</td><td>1</td><td>0</td><td>0</td><td><strong>1</strong></td></tr>
+<tr><td>Technisch (lege winkelwagen/ niet inloggen/ contact)</td><td>0</td><td>0</td><td>1</td><td>0</td><td><strong>1</strong></td></tr>
+</tbody>
+  </table></div>
+  <div class="ibox warn" style="margin-top:16px"><div class="it">Geen gehoor — hardnekkig (ook in April)</div><p>Meest voorkomende reden in alle maanden. Overweeg WhatsApp/SMS als extra contactkanaal. In april al 46x geregistreerd ondanks vroeg stadium.</p></div>
+  <div class="ibox"><div class="it">"Is er nog mee bezig" — warm segment, prima voor follow-up</div><p>In maart 28x, in april al vroeg aanwezig. Structureerde 1-2 week follow-up voor dit segment levert aantoonbaar resultaat — zie tab Nieuwe bestellingen.</p></div>
+</div>
+
+<div class="page" id="page-apr">
+  <div class="sec pu">April 2026 — volledig detail</div>
+  <div class="kgrid">
+    <div class="kpi pu"><div class="klabel">Ingemeten</div><div class="kval">473</div><div class="ksub">April 2026</div></div>
+    <div class="kpi pu"><div class="klabel">Besteld</div><div class="kval">308</div><div class="ksub">van 473 metingen</div></div>
+    <div class="kpi rd"><div class="klabel">Conversie</div><div class="kval" style="color:#e74c3c">65.1%</div><div class="ksub">▼ 10.3 ppt vs Q1 gem</div></div>
+    <div class="kpi"><div class="klabel">Waarde ingemeten</div><div class="kval" style="font-size:19px">€865.593</div><div class="ksub">April 2026</div></div>
+    <div class="kpi"><div class="klabel">Waarde besteld</div><div class="kval" style="font-size:19px">€485.367</div><div class="ksub">April 2026</div></div>
+    <div class="kpi"><div class="klabel">Conv% waarde</div><div class="kval">56.1%</div><div class="ksub">besteld / ingemeten €</div></div>
+  </div>
+
+  <div class="crow">
+    <div class="cc">
+      <div class="ctitle">Adviseurs april — conv% vs Q1 gemiddelde</div>
+      <div style="position:relative;height:260px"><canvas id="cAprAdv"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="ctitle">Provincie conversie — April</div>
+      <div style="position:relative;height:260px"><canvas id="cAprProv"></canvas></div>
+    </div>
+  </div>
+
+  <div class="sec pu">Per adviseur — April detail</div>
+  <div class="scr"><table>
+    <thead><tr><th>Adviseur</th><th>Ingemeten</th><th>Besteld</th><th>Niet best.</th><th>Conv%</th><th>Waarde ing.</th><th>Waarde best.</th><th>vs Q1 gem</th></tr></thead>
+    <tbody>
+<tr><td><strong>Cristian</strong></td><td>60</td><td>41</td><td>19</td><td><span class="pill po">68.3%</span></td><td>€110.748</td><td>€71.929</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-12.2%</span></td></tr>
+<tr><td><strong>Dennis</strong></td><td>48</td><td>31</td><td>17</td><td><span class="pill po">64.6%</span></td><td>€114.727</td><td>€56.077</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-16.3%</span></td></tr>
+<tr><td><strong>Jeffrey</strong></td><td>63</td><td>45</td><td>18</td><td><span class="pill pg">71.4%</span></td><td>€85.201</td><td>€50.832</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-0.7%</span></td></tr>
+<tr><td><strong>Michel</strong></td><td>62</td><td>42</td><td>20</td><td><span class="pill po">67.7%</span></td><td>€123.210</td><td>€78.156</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-6.5%</span></td></tr>
+<tr><td><strong>Peter</strong></td><td>43</td><td>26</td><td>17</td><td><span class="pill po">60.5%</span></td><td>€75.119</td><td>€41.188</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-12.9%</span></td></tr>
+<tr><td><strong>Quinten</strong></td><td>43</td><td>28</td><td>15</td><td><span class="pill po">65.1%</span></td><td>€73.255</td><td>€44.905</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-6.0%</span></td></tr>
+<tr><td><strong>Ramon</strong></td><td>43</td><td>29</td><td>14</td><td><span class="pill po">67.4%</span></td><td>€69.496</td><td>€44.516</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-14.2%</span></td></tr>
+<tr><td><strong>Remco</strong></td><td>72</td><td>46</td><td>26</td><td><span class="pill po">63.9%</span></td><td>€137.871</td><td>€74.388</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-5.8%</span></td></tr>
+<tr><td><strong>Torsten</strong></td><td>39</td><td>20</td><td>19</td><td><span class="pill pr">51.3%</span></td><td>€75.966</td><td>€23.376</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-16.2%</span></td></tr>
+    <tr class="tr-tot"><td>Totaal</td><td>473</td><td>308</td><td>165</td><td><span class="pill pa">65.1%</span></td><td>€865.593</td><td>€485.367</td><td><span style="color:#e74c3c;font-size:11px;font-weight:600">-10.3%</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="sec pu">Provincie — April</div>
+  <div class="scr"><table>
+    <thead><tr><th>Provincie</th><th>Ingemeten</th><th>Besteld</th><th>Niet besteld</th><th>Conversie</th></tr></thead>
+    <tbody>
+<tr><td><strong>Overijssel</strong></td><td>107</td><td>74</td><td>33</td><td><span class="pill po">69.2%</span></td></tr>
+<tr><td><strong>Noord-Holland</strong></td><td>61</td><td>38</td><td>23</td><td><span class="pill pr">62.3%</span></td></tr>
+<tr><td><strong>Zuid-Holland</strong></td><td>54</td><td>31</td><td>23</td><td><span class="pill pr">57.4%</span></td></tr>
+<tr><td><strong>Gelderland</strong></td><td>38</td><td>25</td><td>13</td><td><span class="pill po">65.8%</span></td></tr>
+<tr><td><strong>Noord-Brabant</strong></td><td>37</td><td>26</td><td>11</td><td><span class="pill po">70.3%</span></td></tr>
+<tr><td><strong>Utrecht</strong></td><td>35</td><td>27</td><td>8</td><td><span class="pill pg">77.1%</span></td></tr>
+<tr><td><strong>Limburg</strong></td><td>29</td><td>23</td><td>6</td><td><span class="pill pg">79.3%</span></td></tr>
+<tr><td><strong>België</strong></td><td>24</td><td>15</td><td>9</td><td><span class="pill pr">62.5%</span></td></tr>
+<tr><td><strong>Flevoland</strong></td><td>16</td><td>8</td><td>8</td><td><span class="pill pr">50.0%</span></td></tr>
+<tr><td><strong>Fryslân</strong></td><td>15</td><td>9</td><td>6</td><td><span class="pill pr">60.0%</span></td></tr>
+<tr><td><strong>Drenthe</strong></td><td>13</td><td>9</td><td>4</td><td><span class="pill po">69.2%</span></td></tr>
+<tr><td><strong>Groningen</strong></td><td>10</td><td>7</td><td>3</td><td><span class="pill po">70.0%</span></td></tr>
+<tr><td><strong>Zeeland</strong></td><td>5</td><td>3</td><td>2</td><td><span class="pill pr">60.0%</span></td></tr>
+<tr><td><strong>nan</strong></td><td>2</td><td>1</td><td>1</td><td><span class="pill pr">50.0%</span></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<div class="page" id="page-nc">
+  <div class="nc-banner">
+    <div class="icon">🆕</div>
+    <div class="text">
+      <strong>9 nieuwe bestellingen gedetecteerd t.o.v. vorige meting</strong>
+      Klanten in Q1 die eerder <strong>NIET</strong> hadden besteld en nu <strong>WEL</strong> — puur door actief opvolgen.<br>
+      Extra omzet: <strong>€20.525</strong> &nbsp;·&nbsp; Via mail: <strong>7x</strong> &nbsp;·&nbsp; Via bellen: <strong>2x</strong>
+    </div>
+  </div>
+
+  <div class="kgrid">
+    <div class="kpi bl"><div class="klabel">Nieuwe bestellingen</div><div class="kval" style="color:#1565c0">9</div><div class="ksub">t.o.v. vorige meting</div></div>
+    <div class="kpi bl"><div class="klabel">Extra omzet</div><div class="kval" style="font-size:19px">€20.525</div><div class="ksub">puur via nabellen/mail</div></div>
+    <div class="kpi gd"><div class="klabel">Via mail</div><div class="kval">7x</div><div class="ksub">78% van conversies</div></div>
+    <div class="kpi gd"><div class="klabel">Via bellen</div><div class="kval">2x</div><div class="ksub">22% van conversies</div></div>
+  </div>
+
+  <div class="ibox bl"><div class="it">📧 Mail meest effectief (78%) — alle 9 conversies via actief contact</div><p>Niemand bestelde spontaan. 7 via mail, 2 via bellen. Dit bewijst de directe waarde van het nabelsysteem. Elke run laat nieuwe resultaten zien van eerder werk.</p></div>
+  <div class="ibox good"><div class="it">💰 €20.525 extra omzet door structureel opvolgen</div><p>Klanten met eerder "Geen gehoor" of "Is er nog mee bezig" hebben alsnog besteld. Ramon, Torsten, Remco en Cristian scoren elk meerdere nieuwe conversies.</p></div>
+
+  <div class="sec bl">Detectiemethode</div>
+  <div style="background:#fff;border:1px solid #eee;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:12px;line-height:1.8;color:#555">
+    Per order in Q1 (jan, feb, mrt) is kolom G (Besteld) vergeleken tussen de <strong>vorige meting</strong> (originele bellijst) en de <strong>huidige meting</strong> (nieuwe bellijst BellijstQ1enApril).
+    Orders waarbij kolom G <strong>leeg was</strong> en nu <strong>gevuld is</strong> = nieuwe bestelling.
+    Kolom J (Bel of mail) toont het gebruikte contactkanaal.
+  </div>
+
+  <div class="sec bl">Alle nieuwe bestellingen</div>
+  <div class="scr"><table>
+    <thead><tr><th class="bl">Klant</th><th class="bl">Maand</th><th class="bl">Adviseur</th><th class="bl">Waarde</th><th class="bl">Via</th><th class="bl">Vorige reden</th></tr></thead>
+    <tbody><tr><td><strong>Danny Scholing</strong></td><td>Januari</td><td>Ramon</td><td>€2.926</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">Is er nog mee bezig</td></tr>
+<tr><td><strong>Petra Krudde</strong></td><td>Februari</td><td>Torsten</td><td>€2.713</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">Geen gehoor</td></tr>
+<tr><td><strong>Martijn Visser</strong></td><td>Februari</td><td>Ramon</td><td>€1.627</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">Geen gehoor</td></tr>
+<tr><td><strong>Melanie De Graaf</strong></td><td>Maart</td><td>Torsten</td><td>€4.457</td><td><span style="background:#e8f5e9;color:#1b5e20;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📞 Bellen</span></td><td style="color:#666;font-size:11px">Geen gehoor</td></tr>
+<tr><td><strong>Olaf Corduwener</strong></td><td>Maart</td><td>Jeffrey</td><td>€4.230</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">—</td></tr>
+<tr><td><strong>Anneke Rietman</strong></td><td>Maart</td><td>Cristian</td><td>€1.361</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">Geen gehoor</td></tr>
+<tr><td><strong>Asli Akyol</strong></td><td>Maart</td><td>Remco</td><td>€1.135</td><td><span style="background:#e8f5e9;color:#1b5e20;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📞 Bellen</span></td><td style="color:#666;font-size:11px">Overig (reden plaatsen in blad 'redenen')</td></tr>
+<tr><td><strong>Ingeborg Bloem</strong></td><td>Maart</td><td>Remco</td><td>€1.490</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">Is er nog mee bezig</td></tr>
+<tr><td><strong>Eline Kleinman</strong></td><td>Maart</td><td>Michel</td><td>€585</td><td><span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">📧 Mail</span></td><td style="color:#666;font-size:11px">—</td></tr>
+
+    <tr style="background:#e3f2fd;font-weight:700;border-top:2px solid #1565c0">
+      <td colspan="3">Totaal</td><td>€20.525</td><td>📧 7x mail &nbsp; 📞 2x bellen</td><td></td>
+    </tr>
+    </tbody>
+  </table></div>
+
+  <div class="crow">
+    <div class="cc"><div class="ctitle">Mail vs bellen</div><div style="position:relative;height:230px"><canvas id="cNcMeth"></canvas></div></div>
+    <div class="cc"><div class="ctitle">Nieuwe bestellingen per maand</div><div style="position:relative;height:230px"><canvas id="cNcMnd"></canvas></div></div>
+  </div>
+
+  <div class="sec bl" style="margin-top:4px">Per adviseur</div>
+  <div class="scr"><table>
+    <thead><tr><th class="bl">Adviseur</th><th class="bl">Nieuwe best.</th><th class="bl">Extra waarde</th><th class="bl">Via mail</th><th class="bl">Via bellen</th></tr></thead>
+    <tbody><tr><td><strong>Ramon</strong></td><td>2</td><td>€4.553</td><td>📧 2</td><td>—</td></tr>
+<tr><td><strong>Torsten</strong></td><td>2</td><td>€7.170</td><td>📧 1</td><td>📞 1</td></tr>
+<tr><td><strong>Remco</strong></td><td>2</td><td>€2.625</td><td>📧 1</td><td>📞 1</td></tr>
+<tr><td><strong>Jeffrey</strong></td><td>1</td><td>€4.230</td><td>📧 1</td><td>—</td></tr>
+<tr><td><strong>Cristian</strong></td><td>1</td><td>€1.361</td><td>📧 1</td><td>—</td></tr>
+<tr><td><strong>Michel</strong></td><td>1</td><td>€585</td><td>📧 1</td><td>—</td></tr>
+</tbody>
+  </table></div>
+</div>
+<script>
+const O="#F59901",D="#2D2D2D",L="#F9CD92",P="#ce93d8",BL="#1565c0",PU="#9c27b0";
+const MAANDEN=["Januari", "Februari", "Maart", "April"];
+const ADV_NAMES=["Cristian", "Dennis", "Jeffrey", "Michel", "Peter", "Quinten", "Ramon", "Remco", "Torsten"];
+const MND={"Januari": {"ingemeten": 406, "besteld": 312, "niet": 94, "conv": 76.8, "waarde_in": 749006, "waarde_best": 557056, "conv_waarde": 74.4, "nabellen_benaderd": 91, "nabellen_besteld": 39, "nabellen_conv": 42.9, "redenen": {"Geen gehoor": 20, "Is er nog mee bezig": 16, "Ziet ervan af": 3, "Overig (reden plaatsen in blad 'redenen')": 3, "Gaat bestellen": 3, "Service": 2, "Wacht op korting": 2, "Elders goedkoper": 1, "Uitstel vanwege andere prioriteiten": 1, "Nogmaals meten": 1}, "bel_of_mail": {"Mail": 55, "Bellen": 39}}, "Februari": {"ingemeten": 509, "besteld": 370, "niet": 139, "conv": 72.7, "waarde_in": 891173, "waarde_best": 627690, "conv_waarde": 70.4, "nabellen_benaderd": 151, "nabellen_besteld": 52, "nabellen_conv": 34.4, "redenen": {"Geen gehoor": 55, "Is er nog mee bezig": 19, "Ziet ervan af": 7, "Overig (reden plaatsen in blad 'redenen')": 5, "Wacht op korting": 3, "Nogmaals meten": 2, "Gaat bestellen": 2, "Service": 2, "Elders goedkoper": 2, "Niet kunnen leveren wat de klant wil": 1}, "bel_of_mail": {"Mail": 136, "Bellen": 49}}, "Maart": {"ingemeten": 488, "besteld": 374, "niet": 114, "conv": 76.6, "waarde_in": 977644, "waarde_best": 740951, "conv_waarde": 75.8, "nabellen_benaderd": 135, "nabellen_besteld": 52, "nabellen_conv": 38.5, "redenen": {"Geen gehoor": 28, "Is er nog mee bezig": 27, "Ziet ervan af": 14, "Overig (reden plaatsen in blad 'redenen')": 7, "Elders goedkoper": 3, "Gaat bestellen": 1, "Nogmaals meten": 1, "Wacht op korting": 1, "Technisch (lege winkelwagen/ niet inloggen/ contact)": 1}, "bel_of_mail": {"Mail": 128, "Bellen": 47}}, "April": {"ingemeten": 473, "besteld": 308, "niet": 165, "conv": 65.1, "waarde_in": 865593, "waarde_best": 485367, "conv_waarde": 56.1, "nabellen_benaderd": 72, "nabellen_besteld": 8, "nabellen_conv": 11.1, "redenen": {"Geen gehoor": 31, "Is er nog mee bezig": 20, "Overig (reden plaatsen in blad 'redenen')": 4, "Ziet ervan af": 3, "Gaat bestellen": 2, "Uitstel vanwege andere prioriteiten": 2, "Wacht op korting": 1, "Nogmaals meten": 1}, "bel_of_mail": {"Mail": 76, "Bellen": 17}}};
+const ADV={"Cristian": {"Januari": {"ingemeten": 52, "besteld": 42, "niet": 10, "conv": 80.8, "waarde_in": 88840, "waarde_best": 77926, "conv_waarde": 87.7, "nabellen_benaderd": 16, "nabellen_besteld": 9, "nabellen_conv": 56.2, "provincies": {"Gelderland": {"i": 6, "b": 5, "c": 83.3}, "Noord-Brabant": {"i": 2, "b": 1, "c": 50.0}, "Overijssel": {"i": 2, "b": 2, "c": 100.0}, "Utrecht": {"i": 22, "b": 17, "c": 77.3}, "Zuid-Holland": {"i": 17, "b": 14, "c": 82.4}}, "redenen": {"Is er nog mee bezig": 3, "Overig (reden plaatsen in blad 'redenen')": 2, "Gaat bestellen": 1, "Geen gehoor": 1}}, "Februari": {"ingemeten": 72, "besteld": 59, "niet": 13, "conv": 81.9, "waarde_in": 122725, "waarde_best": 100244, "conv_waarde": 81.7, "nabellen_benaderd": 19, "nabellen_besteld": 10, "nabellen_conv": 52.6, "provincies": {"Gelderland": {"i": 5, "b": 3, "c": 60.0}, "Noord-Brabant": {"i": 22, "b": 17, "c": 77.3}, "Utrecht": {"i": 15, "b": 11, "c": 73.3}, "Zuid-Holland": {"i": 25, "b": 23, "c": 92.0}}, "redenen": {"Geen gehoor": 6, "Overig (reden plaatsen in blad 'redenen')": 1, "Technisch (lege winkelwagen/ niet inloggen/ contact)": 1, "Is er nog mee bezig": 1}}, "Maart": {"ingemeten": 61, "besteld": 48, "niet": 13, "conv": 78.7, "waarde_in": 106942, "waarde_best": 88336, "conv_waarde": 82.6, "nabellen_benaderd": 16, "nabellen_besteld": 7, "nabellen_conv": 43.8, "provincies": {"Gelderland": {"i": 2, "b": 2, "c": 100.0}, "Noord-Brabant": {"i": 14, "b": 10, "c": 71.4}, "Overijssel": {"i": 3, "b": 3, "c": 100.0}, "Utrecht": {"i": 15, "b": 12, "c": 80.0}, "Zuid-Holland": {"i": 22, "b": 17, "c": 77.3}}, "redenen": {"Is er nog mee bezig": 4, "Geen gehoor": 2, "Elders goedkoper": 1, "Overig (reden plaatsen in blad 'redenen')": 1, "Wacht op korting": 1}}, "April": {"ingemeten": 60, "besteld": 41, "niet": 19, "conv": 68.3, "waarde_in": 110748, "waarde_best": 71929, "conv_waarde": 64.9, "nabellen_benaderd": 10, "nabellen_besteld": 1, "nabellen_conv": 10.0, "provincies": {"Flevoland": {"i": 3, "b": 1, "c": 33.3}, "Gelderland": {"i": 7, "b": 5, "c": 71.4}, "Noord-Brabant": {"i": 16, "b": 13, "c": 81.2}, "Noord-Holland": {"i": 4, "b": 4, "c": 100.0}, "Overijssel": {"i": 7, "b": 6, "c": 85.7}, "Utrecht": {"i": 11, "b": 9, "c": 81.8}, "Zuid-Holland": {"i": 8, "b": 3, "c": 37.5}}, "redenen": {"Is er nog mee bezig": 4, "Geen gehoor": 3, "Gaat bestellen": 1, "Overig (reden plaatsen in blad 'redenen')": 1}}}, "Dennis": {"Januari": {"ingemeten": 42, "besteld": 36, "niet": 6, "conv": 85.7, "waarde_in": 83355, "waarde_best": 60802, "conv_waarde": 72.9, "nabellen_benaderd": 8, "nabellen_besteld": 3, "nabellen_conv": 37.5, "provincies": {"Gelderland": {"i": 16, "b": 14, "c": 87.5}, "Limburg": {"i": 1, "b": 1, "c": 100.0}, "Noord-Brabant": {"i": 4, "b": 4, "c": 100.0}, "Overijssel": {"i": 16, "b": 12, "c": 75.0}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}}, "redenen": {"Is er nog mee bezig": 2, "Uitstel vanwege andere prioriteiten": 1, "Nogmaals meten": 1, "Gaat bestellen": 1}}, "Februari": {"ingemeten": 46, "besteld": 31, "niet": 15, "conv": 67.4, "waarde_in": 78883, "waarde_best": 51594, "conv_waarde": 65.4, "nabellen_benaderd": 10, "nabellen_besteld": 3, "nabellen_conv": 30.0, "provincies": {"Flevoland": {"i": 1, "b": 1, "c": 100.0}, "Gelderland": {"i": 17, "b": 11, "c": 64.7}, "Limburg": {"i": 2, "b": 1, "c": 50.0}, "Noord-Brabant": {"i": 3, "b": 2, "c": 66.7}, "Overijssel": {"i": 16, "b": 13, "c": 81.2}, "Utrecht": {"i": 5, "b": 2, "c": 40.0}}, "redenen": {"Geen gehoor": 3, "Is er nog mee bezig": 2, "Niet kunnen leveren wat de klant wil": 1, "Overig (reden plaatsen in blad 'redenen')": 1}}, "Maart": {"ingemeten": 58, "besteld": 52, "niet": 6, "conv": 89.7, "waarde_in": 111819, "waarde_best": 103641, "conv_waarde": 92.7, "nabellen_benaderd": 11, "nabellen_besteld": 7, "nabellen_conv": 63.6, "provincies": {"Gelderland": {"i": 21, "b": 19, "c": 90.5}, "Overijssel": {"i": 34, "b": 31, "c": 91.2}}, "redenen": {"Is er nog mee bezig": 2, "Overig (reden plaatsen in blad 'redenen')": 1, "Ziet ervan af": 1}}, "April": {"ingemeten": 48, "besteld": 31, "niet": 17, "conv": 64.6, "waarde_in": 114727, "waarde_best": 56077, "conv_waarde": 48.9, "nabellen_benaderd": 11, "nabellen_besteld": 3, "nabellen_conv": 27.3, "provincies": {"Gelderland": {"i": 10, "b": 6, "c": 60.0}, "Noord-Holland": {"i": 2, "b": 2, "c": 100.0}, "Overijssel": {"i": 32, "b": 20, "c": 62.5}, "Utrecht": {"i": 3, "b": 2, "c": 66.7}}, "redenen": {"Geen gehoor": 4, "Is er nog mee bezig": 3, "Ziet ervan af": 1}}}, "Jeffrey": {"Januari": {"ingemeten": 18, "besteld": 13, "niet": 5, "conv": 72.2, "waarde_in": 35490, "waarde_best": 20097, "conv_waarde": 56.6, "nabellen_benaderd": 3, "nabellen_besteld": 0, "nabellen_conv": 0.0, "provincies": {"België": {"i": 5, "b": 3, "c": 60.0}, "Limburg": {"i": 6, "b": 5, "c": 83.3}, "Noord-Brabant": {"i": 4, "b": 4, "c": 100.0}}, "redenen": {"Geen gehoor": 2, "Service": 1}}, "Februari": {"ingemeten": 56, "besteld": 41, "niet": 15, "conv": 73.2, "waarde_in": 104847, "waarde_best": 68357, "conv_waarde": 65.2, "nabellen_benaderd": 20, "nabellen_besteld": 7, "nabellen_conv": 35.0, "provincies": {"België": {"i": 21, "b": 15, "c": 71.4}, "Gelderland": {"i": 1, "b": 0, "c": 0.0}, "Limburg": {"i": 21, "b": 16, "c": 76.2}, "Noord-Brabant": {"i": 11, "b": 9, "c": 81.8}, "Provincie Antwerpen": {"i": 1, "b": 1, "c": 100.0}}, "redenen": {"Geen gehoor": 9, "Wacht op korting": 1, "Ziet ervan af": 1, "Is er nog mee bezig": 1, "Overig (reden plaatsen in blad 'redenen')": 1}}, "Maart": {"ingemeten": 65, "besteld": 46, "niet": 19, "conv": 70.8, "waarde_in": 137477, "waarde_best": 100756, "conv_waarde": 73.3, "nabellen_benaderd": 18, "nabellen_besteld": 5, "nabellen_conv": 27.8, "provincies": {"België": {"i": 30, "b": 21, "c": 70.0}, "Limburg": {"i": 14, "b": 9, "c": 64.3}, "Noord-Brabant": {"i": 21, "b": 16, "c": 76.2}}, "redenen": {"Is er nog mee bezig": 5, "Ziet ervan af": 3, "Geen gehoor": 3, "Overig (reden plaatsen in blad 'redenen')": 2}}, "April": {"ingemeten": 63, "besteld": 45, "niet": 18, "conv": 71.4, "waarde_in": 85201, "waarde_best": 50832, "conv_waarde": 59.7, "nabellen_benaderd": 6, "nabellen_besteld": 0, "nabellen_conv": 0.0, "provincies": {"België": {"i": 22, "b": 13, "c": 59.1}, "Gelderland": {"i": 1, "b": 1, "c": 100.0}, "Limburg": {"i": 28, "b": 23, "c": 82.1}, "Noord-Brabant": {"i": 6, "b": 3, "c": 50.0}, "Overijssel": {"i": 1, "b": 1, "c": 100.0}, "nan": {"i": 2, "b": 1, "c": 50.0}}, "redenen": {"Geen gehoor": 5, "Is er nog mee bezig": 1}}}, "Michel": {"Januari": {"ingemeten": 28, "besteld": 20, "niet": 8, "conv": 71.4, "waarde_in": 47714, "waarde_best": 30948, "conv_waarde": 64.9, "nabellen_benaderd": 7, "nabellen_besteld": 3, "nabellen_conv": 42.9, "provincies": {"Drenthe": {"i": 2, "b": 2, "c": 100.0}, "Flevoland": {"i": 5, "b": 3, "c": 60.0}, "Frysl√¢n": {"i": 5, "b": 3, "c": 60.0}, "Gelderland": {"i": 2, "b": 0, "c": 0.0}, "Groningen": {"i": 2, "b": 2, "c": 100.0}, "Overijssel": {"i": 8, "b": 7, "c": 87.5}}, "redenen": {"Is er nog mee bezig": 2, "Wacht op korting": 1, "Geen gehoor": 1}}, "Februari": {"ingemeten": 40, "besteld": 29, "niet": 11, "conv": 72.5, "waarde_in": 69637, "waarde_best": 46576, "conv_waarde": 66.9, "nabellen_benaderd": 9, "nabellen_besteld": 3, "nabellen_conv": 33.3, "provincies": {"Drenthe": {"i": 3, "b": 1, "c": 33.3}, "Flevoland": {"i": 1, "b": 0, "c": 0.0}, "Frysl√¢n": {"i": 5, "b": 4, "c": 80.0}, "Gelderland": {"i": 6, "b": 5, "c": 83.3}, "Groningen": {"i": 4, "b": 4, "c": 100.0}, "Overijssel": {"i": 18, "b": 13, "c": 72.2}}, "redenen": {"Geen gehoor": 3, "Is er nog mee bezig": 2, "Nogmaals meten": 1}}, "Maart": {"ingemeten": 66, "besteld": 52, "niet": 14, "conv": 78.8, "waarde_in": 129152, "waarde_best": 98623, "conv_waarde": 76.4, "nabellen_benaderd": 15, "nabellen_besteld": 6, "nabellen_conv": 40.0, "provincies": {"Drenthe": {"i": 2, "b": 2, "c": 100.0}, "Flevoland": {"i": 8, "b": 6, "c": 75.0}, "Fryslân": {"i": 1, "b": 1, "c": 100.0}, "Frysl√¢n": {"i": 10, "b": 9, "c": 90.0}, "Gelderland": {"i": 4, "b": 4, "c": 100.0}, "Groningen": {"i": 3, "b": 3, "c": 100.0}, "Overijssel": {"i": 33, "b": 24, "c": 72.7}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}}, "redenen": {"Ziet ervan af": 3, "Is er nog mee bezig": 2, "Geen gehoor": 1, "Gaat bestellen": 1, "Elders goedkoper": 1, "Overig (reden plaatsen in blad 'redenen')": 1}}, "April": {"ingemeten": 62, "besteld": 42, "niet": 20, "conv": 67.7, "waarde_in": 123210, "waarde_best": 78156, "conv_waarde": 63.4, "nabellen_benaderd": 9, "nabellen_besteld": 1, "nabellen_conv": 11.1, "provincies": {"Drenthe": {"i": 3, "b": 2, "c": 66.7}, "Flevoland": {"i": 5, "b": 3, "c": 60.0}, "Fryslân": {"i": 11, "b": 7, "c": 63.6}, "Gelderland": {"i": 3, "b": 2, "c": 66.7}, "Groningen": {"i": 8, "b": 6, "c": 75.0}, "Noord-Holland": {"i": 4, "b": 3, "c": 75.0}, "Overijssel": {"i": 25, "b": 17, "c": 68.0}}, "redenen": {"Geen gehoor": 4, "Uitstel vanwege andere prioriteiten": 1, "Overig (reden plaatsen in blad 'redenen')": 1, "Wacht op korting": 1, "Is er nog mee bezig": 1}}}, "Peter": {"Januari": {"ingemeten": 51, "besteld": 38, "niet": 13, "conv": 74.5, "waarde_in": 97350, "waarde_best": 62104, "conv_waarde": 63.8, "nabellen_benaderd": 13, "nabellen_besteld": 4, "nabellen_conv": 30.8, "provincies": {"Gelderland": {"i": 16, "b": 11, "c": 68.8}, "Limburg": {"i": 4, "b": 4, "c": 100.0}, "Noord-Brabant": {"i": 15, "b": 13, "c": 86.7}, "Overijssel": {"i": 3, "b": 2, "c": 66.7}, "Utrecht": {"i": 7, "b": 4, "c": 57.1}, "Zuid-Holland": {"i": 4, "b": 2, "c": 50.0}}, "redenen": {"Geen gehoor": 6, "Elders goedkoper": 1, "Ziet ervan af": 1, "Is er nog mee bezig": 1}}, "Februari": {"ingemeten": 55, "besteld": 40, "niet": 15, "conv": 72.7, "waarde_in": 98231, "waarde_best": 71392, "conv_waarde": 72.7, "nabellen_benaderd": 16, "nabellen_besteld": 4, "nabellen_conv": 25.0, "provincies": {"Gelderland": {"i": 11, "b": 8, "c": 72.7}, "Noord-Brabant": {"i": 20, "b": 15, "c": 75.0}, "Noord-Holland": {"i": 5, "b": 2, "c": 40.0}, "Utrecht": {"i": 6, "b": 5, "c": 83.3}, "Zuid-Holland": {"i": 11, "b": 8, "c": 72.7}}, "redenen": {"Geen gehoor": 6, "Is er nog mee bezig": 3, "Ziet ervan af": 2, "Elders goedkoper": 1}}, "Maart": {"ingemeten": 59, "besteld": 43, "niet": 16, "conv": 72.9, "waarde_in": 115646, "waarde_best": 78625, "conv_waarde": 68.0, "nabellen_benaderd": 19, "nabellen_besteld": 5, "nabellen_conv": 26.3, "provincies": {"Gelderland": {"i": 24, "b": 16, "c": 66.7}, "Limburg": {"i": 1, "b": 1, "c": 100.0}, "Noord-Brabant": {"i": 8, "b": 7, "c": 87.5}, "Noord-Holland": {"i": 8, "b": 4, "c": 50.0}, "Overijssel": {"i": 4, "b": 4, "c": 100.0}, "Utrecht": {"i": 12, "b": 9, "c": 75.0}}, "redenen": {"Is er nog mee bezig": 6, "Geen gehoor": 4, "Elders goedkoper": 1, "Technisch (lege winkelwagen/ niet inloggen/ contact)": 1, "Overig (reden plaatsen in blad 'redenen')": 1, "Ziet ervan af": 1}}, "April": {"ingemeten": 43, "besteld": 26, "niet": 17, "conv": 60.5, "waarde_in": 75119, "waarde_best": 41188, "conv_waarde": 54.8, "nabellen_benaderd": 6, "nabellen_besteld": 0, "nabellen_conv": 0.0, "provincies": {"Gelderland": {"i": 10, "b": 6, "c": 60.0}, "Limburg": {"i": 1, "b": 0, "c": 0.0}, "Noord-Brabant": {"i": 8, "b": 5, "c": 62.5}, "Noord-Holland": {"i": 1, "b": 0, "c": 0.0}, "Overijssel": {"i": 6, "b": 5, "c": 83.3}, "Utrecht": {"i": 10, "b": 8, "c": 80.0}, "Zuid-Holland": {"i": 3, "b": 0, "c": 0.0}}, "redenen": {"Geen gehoor": 3, "Is er nog mee bezig": 3}}}, "Quinten": {"Januari": {"ingemeten": 48, "besteld": 34, "niet": 14, "conv": 70.8, "waarde_in": 84091, "waarde_best": 57716, "conv_waarde": 68.6, "nabellen_benaderd": 12, "nabellen_besteld": 5, "nabellen_conv": 41.7, "provincies": {"België": {"i": 1, "b": 1, "c": 100.0}, "Noord-Brabant": {"i": 16, "b": 12, "c": 75.0}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}, "Zeeland": {"i": 5, "b": 4, "c": 80.0}, "Zuid-Holland": {"i": 24, "b": 15, "c": 62.5}}, "redenen": {"Geen gehoor": 3, "Overig (reden plaatsen in blad 'redenen')": 1, "Ziet ervan af": 1, "Gaat bestellen": 1, "Is er nog mee bezig": 1}}, "Februari": {"ingemeten": 59, "besteld": 42, "niet": 17, "conv": 71.2, "waarde_in": 98364, "waarde_best": 62599, "conv_waarde": 63.6, "nabellen_benaderd": 20, "nabellen_besteld": 7, "nabellen_conv": 35.0, "provincies": {"België": {"i": 5, "b": 4, "c": 80.0}, "Noord-Brabant": {"i": 17, "b": 12, "c": 70.6}, "Zeeland": {"i": 6, "b": 5, "c": 83.3}, "Zuid-Holland": {"i": 26, "b": 17, "c": 65.4}}, "redenen": {"Geen gehoor": 9, "Gaat bestellen": 2, "Is er nog mee bezig": 1, "Service": 1}}, "Maart": {"ingemeten": 63, "besteld": 45, "niet": 18, "conv": 71.4, "waarde_in": 126202, "waarde_best": 86081, "conv_waarde": 68.2, "nabellen_benaderd": 22, "nabellen_besteld": 8, "nabellen_conv": 36.4, "provincies": {"België": {"i": 4, "b": 3, "c": 75.0}, "Noord-Brabant": {"i": 20, "b": 14, "c": 70.0}, "Zeeland": {"i": 3, "b": 1, "c": 33.3}, "Zuid-Holland": {"i": 34, "b": 27, "c": 79.4}}, "redenen": {"Geen gehoor": 8, "Ziet ervan af": 3, "Is er nog mee bezig": 2, "Nogmaals meten": 1}}, "April": {"ingemeten": 43, "besteld": 28, "niet": 15, "conv": 65.1, "waarde_in": 73255, "waarde_best": 44905, "conv_waarde": 61.3, "nabellen_benaderd": 7, "nabellen_besteld": 1, "nabellen_conv": 14.3, "provincies": {"België": {"i": 2, "b": 2, "c": 100.0}, "Noord-Brabant": {"i": 7, "b": 5, "c": 71.4}, "Utrecht": {"i": 1, "b": 0, "c": 0.0}, "Zeeland": {"i": 5, "b": 3, "c": 60.0}, "Zuid-Holland": {"i": 22, "b": 16, "c": 72.7}}, "redenen": {"Is er nog mee bezig": 2, "Geen gehoor": 2, "Overig (reden plaatsen in blad 'redenen')": 1, "Nogmaals meten": 1}}}, "Ramon": {"Januari": {"ingemeten": 82, "besteld": 73, "niet": 9, "conv": 89.0, "waarde_in": 158170, "waarde_best": 139542, "conv_waarde": 88.2, "nabellen_benaderd": 11, "nabellen_besteld": 7, "nabellen_conv": 63.6, "provincies": {"Drenthe": {"i": 5, "b": 5, "c": 100.0}, "Frysl√¢n": {"i": 3, "b": 3, "c": 100.0}, "Gelderland": {"i": 3, "b": 2, "c": 66.7}, "Groningen": {"i": 8, "b": 8, "c": 100.0}, "Overijssel": {"i": 62, "b": 54, "c": 87.1}}, "redenen": {"Is er nog mee bezig": 3, "Service": 1}}, "Februari": {"ingemeten": 80, "besteld": 63, "niet": 17, "conv": 78.8, "waarde_in": 147789, "waarde_best": 116798, "conv_waarde": 79.0, "nabellen_benaderd": 18, "nabellen_besteld": 7, "nabellen_conv": 38.9, "provincies": {"Drenthe": {"i": 1, "b": 1, "c": 100.0}, "Frysl√¢n": {"i": 5, "b": 3, "c": 60.0}, "Gelderland": {"i": 15, "b": 11, "c": 73.3}, "Groningen": {"i": 4, "b": 4, "c": 100.0}, "Overijssel": {"i": 52, "b": 43, "c": 82.7}}, "redenen": {"Geen gehoor": 4, "Wacht op korting": 2, "Ziet ervan af": 2, "Overig (reden plaatsen in blad 'redenen')": 1, "Service": 1, "Elders goedkoper": 1}}, "Maart": {"ingemeten": 39, "besteld": 30, "niet": 9, "conv": 76.9, "waarde_in": 104893, "waarde_best": 75604, "conv_waarde": 72.1, "nabellen_benaderd": 14, "nabellen_besteld": 5, "nabellen_conv": 35.7, "provincies": {"Drenthe": {"i": 6, "b": 4, "c": 66.7}, "Groningen": {"i": 7, "b": 6, "c": 85.7}, "Overijssel": {"i": 25, "b": 19, "c": 76.0}}, "redenen": {"Geen gehoor": 6, "Is er nog mee bezig": 2, "Overig (reden plaatsen in blad 'redenen')": 1}}, "April": {"ingemeten": 43, "besteld": 29, "niet": 14, "conv": 67.4, "waarde_in": 69496, "waarde_best": 44516, "conv_waarde": 64.1, "nabellen_benaderd": 2, "nabellen_besteld": 0, "nabellen_conv": 0.0, "provincies": {"Drenthe": {"i": 10, "b": 7, "c": 70.0}, "Fryslân": {"i": 4, "b": 2, "c": 50.0}, "Groningen": {"i": 2, "b": 1, "c": 50.0}, "Overijssel": {"i": 26, "b": 19, "c": 73.1}}, "redenen": {"Is er nog mee bezig": 1, "Ziet ervan af": 1}}}, "Remco": {"Januari": {"ingemeten": 48, "besteld": 28, "niet": 20, "conv": 58.3, "waarde_in": 84884, "waarde_best": 55811, "conv_waarde": 65.8, "nabellen_benaderd": 13, "nabellen_besteld": 6, "nabellen_conv": 46.2, "provincies": {"Flevoland": {"i": 2, "b": 1, "c": 50.0}, "Noord-Holland": {"i": 42, "b": 25, "c": 59.5}, "Utrecht": {"i": 1, "b": 0, "c": 0.0}, "Zuid-Holland": {"i": 3, "b": 2, "c": 66.7}}, "redenen": {"Geen gehoor": 4, "Is er nog mee bezig": 2, "Ziet ervan af": 1}}, "Februari": {"ingemeten": 50, "besteld": 37, "niet": 13, "conv": 74.0, "waarde_in": 78669, "waarde_best": 55222, "conv_waarde": 70.2, "nabellen_benaderd": 16, "nabellen_besteld": 5, "nabellen_conv": 31.2, "provincies": {"Flevoland": {"i": 4, "b": 2, "c": 50.0}, "Frysl√¢n": {"i": 1, "b": 1, "c": 100.0}, "Noord-Holland": {"i": 40, "b": 32, "c": 80.0}, "Zuid-Holland": {"i": 2, "b": 1, "c": 50.0}}, "redenen": {"Geen gehoor": 7, "Ziet ervan af": 1, "Is er nog mee bezig": 1, "Nogmaals meten": 1, "Overig (reden plaatsen in blad 'redenen')": 1}}, "Maart": {"ingemeten": 52, "besteld": 40, "niet": 12, "conv": 76.9, "waarde_in": 82548, "waarde_best": 63670, "conv_waarde": 77.1, "nabellen_benaderd": 14, "nabellen_besteld": 7, "nabellen_conv": 50.0, "provincies": {"Flevoland": {"i": 1, "b": 1, "c": 100.0}, "Gelderland": {"i": 3, "b": 3, "c": 100.0}, "Noord-Brabant": {"i": 3, "b": 2, "c": 66.7}, "Noord-Holland": {"i": 36, "b": 26, "c": 72.2}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}, "Zuid-Holland": {"i": 8, "b": 7, "c": 87.5}}, "redenen": {"Geen gehoor": 4, "Is er nog mee bezig": 2, "Ziet ervan af": 1}}, "April": {"ingemeten": 72, "besteld": 46, "niet": 26, "conv": 63.9, "waarde_in": 137871, "waarde_best": 74388, "conv_waarde": 54.0, "nabellen_benaderd": 14, "nabellen_besteld": 2, "nabellen_conv": 14.3, "provincies": {"Flevoland": {"i": 8, "b": 4, "c": 50.0}, "Gelderland": {"i": 5, "b": 5, "c": 100.0}, "Noord-Holland": {"i": 39, "b": 24, "c": 61.5}, "Overijssel": {"i": 1, "b": 1, "c": 100.0}, "Utrecht": {"i": 9, "b": 7, "c": 77.8}, "Zuid-Holland": {"i": 7, "b": 3, "c": 42.9}}, "redenen": {"Geen gehoor": 7, "Is er nog mee bezig": 3, "Ziet ervan af": 1, "Uitstel vanwege andere prioriteiten": 1}}}, "Torsten": {"Januari": {"ingemeten": 37, "besteld": 28, "niet": 9, "conv": 75.7, "waarde_in": 69110, "waarde_best": 52108, "conv_waarde": 75.4, "nabellen_benaderd": 8, "nabellen_besteld": 2, "nabellen_conv": 25.0, "provincies": {"Flevoland": {"i": 1, "b": 1, "c": 100.0}, "Noord-Holland": {"i": 7, "b": 4, "c": 57.1}, "Overijssel": {"i": 2, "b": 2, "c": 100.0}, "Utrecht": {"i": 12, "b": 9, "c": 75.0}, "Zuid-Holland": {"i": 12, "b": 11, "c": 91.7}}, "redenen": {"Geen gehoor": 3, "Is er nog mee bezig": 2, "Wacht op korting": 1}}, "Februari": {"ingemeten": 51, "besteld": 28, "niet": 23, "conv": 54.9, "waarde_in": 92028, "waarde_best": 54908, "conv_waarde": 59.7, "nabellen_benaderd": 23, "nabellen_besteld": 6, "nabellen_conv": 26.1, "provincies": {"Flevoland": {"i": 2, "b": 1, "c": 50.0}, "Frysl√¢n": {"i": 1, "b": 1, "c": 100.0}, "Gelderland": {"i": 7, "b": 2, "c": 28.6}, "Noord-Holland": {"i": 13, "b": 10, "c": 76.9}, "Overijssel": {"i": 11, "b": 5, "c": 45.5}, "Utrecht": {"i": 5, "b": 2, "c": 40.0}, "Zuid-Holland": {"i": 10, "b": 5, "c": 50.0}}, "redenen": {"Is er nog mee bezig": 8, "Geen gehoor": 8, "Ziet ervan af": 1}}, "Maart": {"ingemeten": 25, "besteld": 18, "niet": 7, "conv": 72.0, "waarde_in": 62965, "waarde_best": 45615, "conv_waarde": 72.4, "nabellen_benaderd": 6, "nabellen_besteld": 2, "nabellen_conv": 33.3, "provincies": {"Drenthe": {"i": 1, "b": 1, "c": 100.0}, "Flevoland": {"i": 3, "b": 2, "c": 66.7}, "Noord-Holland": {"i": 14, "b": 9, "c": 64.3}, "Overijssel": {"i": 1, "b": 1, "c": 100.0}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}, "Zuid-Holland": {"i": 5, "b": 4, "c": 80.0}}, "redenen": {"Ziet ervan af": 2, "Is er nog mee bezig": 2}}, "April": {"ingemeten": 39, "besteld": 20, "niet": 19, "conv": 51.3, "waarde_in": 75966, "waarde_best": 23376, "conv_waarde": 30.8, "nabellen_benaderd": 7, "nabellen_besteld": 0, "nabellen_conv": 0.0, "provincies": {"Gelderland": {"i": 2, "b": 0, "c": 0.0}, "Noord-Holland": {"i": 11, "b": 5, "c": 45.5}, "Overijssel": {"i": 9, "b": 5, "c": 55.6}, "Utrecht": {"i": 1, "b": 1, "c": 100.0}, "Zuid-Holland": {"i": 14, "b": 9, "c": 64.3}}, "redenen": {"Geen gehoor": 3, "Is er nog mee bezig": 2, "Overig (reden plaatsen in blad 'redenen')": 1, "Gaat bestellen": 1}}}};
+const PROV={"Januari": {"België": {"i": 6, "b": 4, "c": 66.7}, "Drenthe": {"i": 7, "b": 7, "c": 100.0}, "Flevoland": {"i": 8, "b": 5, "c": 62.5}, "Frysl√¢n": {"i": 8, "b": 6, "c": 75.0}, "Gelderland": {"i": 43, "b": 32, "c": 74.4}, "Groningen": {"i": 10, "b": 10, "c": 100.0}, "Limburg": {"i": 11, "b": 10, "c": 90.9}, "Noord-Brabant": {"i": 41, "b": 34, "c": 82.9}, "Noord-Holland": {"i": 49, "b": 29, "c": 59.2}, "Overijssel": {"i": 93, "b": 79, "c": 84.9}, "Utrecht": {"i": 44, "b": 32, "c": 72.7}, "Zeeland": {"i": 5, "b": 4, "c": 80.0}, "Zuid-Holland": {"i": 60, "b": 44, "c": 73.3}}, "Februari": {"België": {"i": 26, "b": 19, "c": 73.1}, "Drenthe": {"i": 4, "b": 2, "c": 50.0}, "Flevoland": {"i": 8, "b": 4, "c": 50.0}, "Frysl√¢n": {"i": 12, "b": 9, "c": 75.0}, "Gelderland": {"i": 62, "b": 40, "c": 64.5}, "Groningen": {"i": 8, "b": 8, "c": 100.0}, "Limburg": {"i": 23, "b": 17, "c": 73.9}, "Noord-Brabant": {"i": 73, "b": 55, "c": 75.3}, "Noord-Holland": {"i": 58, "b": 44, "c": 75.9}, "Overijssel": {"i": 97, "b": 74, "c": 76.3}, "Provincie Antwerpen": {"i": 1, "b": 1, "c": 100.0}, "Utrecht": {"i": 31, "b": 20, "c": 64.5}, "Zeeland": {"i": 6, "b": 5, "c": 83.3}, "Zuid-Holland": {"i": 74, "b": 54, "c": 73.0}}, "Maart": {"België": {"i": 34, "b": 24, "c": 70.6}, "Drenthe": {"i": 9, "b": 7, "c": 77.8}, "Flevoland": {"i": 12, "b": 9, "c": 75.0}, "Fryslân": {"i": 1, "b": 1, "c": 100.0}, "Frysl√¢n": {"i": 10, "b": 9, "c": 90.0}, "Gelderland": {"i": 54, "b": 44, "c": 81.5}, "Groningen": {"i": 10, "b": 9, "c": 90.0}, "Limburg": {"i": 15, "b": 10, "c": 66.7}, "Noord-Brabant": {"i": 66, "b": 49, "c": 74.2}, "Noord-Holland": {"i": 58, "b": 39, "c": 67.2}, "Overijssel": {"i": 100, "b": 82, "c": 82.0}, "Utrecht": {"i": 30, "b": 24, "c": 80.0}, "Zeeland": {"i": 3, "b": 1, "c": 33.3}, "Zuid-Holland": {"i": 69, "b": 55, "c": 79.7}}, "April": {"België": {"i": 24, "b": 15, "c": 62.5}, "Drenthe": {"i": 13, "b": 9, "c": 69.2}, "Flevoland": {"i": 16, "b": 8, "c": 50.0}, "Fryslân": {"i": 15, "b": 9, "c": 60.0}, "Gelderland": {"i": 38, "b": 25, "c": 65.8}, "Groningen": {"i": 10, "b": 7, "c": 70.0}, "Limburg": {"i": 29, "b": 23, "c": 79.3}, "Noord-Brabant": {"i": 37, "b": 26, "c": 70.3}, "Noord-Holland": {"i": 61, "b": 38, "c": 62.3}, "Overijssel": {"i": 107, "b": 74, "c": 69.2}, "Utrecht": {"i": 35, "b": 27, "c": 77.1}, "Zeeland": {"i": 5, "b": 3, "c": 60.0}, "Zuid-Holland": {"i": 54, "b": 31, "c": 57.4}, "nan": {"i": 2, "b": 1, "c": 50.0}}, "Totaal": {"België": {"i": 90, "b": 62, "c": 68.9}, "Drenthe": {"i": 33, "b": 25, "c": 75.8}, "Flevoland": {"i": 44, "b": 26, "c": 59.1}, "Frysl√¢n": {"i": 30, "b": 24, "c": 80.0}, "Gelderland": {"i": 197, "b": 141, "c": 71.6}, "Groningen": {"i": 38, "b": 34, "c": 89.5}, "Limburg": {"i": 78, "b": 60, "c": 76.9}, "Noord-Brabant": {"i": 217, "b": 164, "c": 75.6}, "Noord-Holland": {"i": 226, "b": 150, "c": 66.4}, "Overijssel": {"i": 397, "b": 309, "c": 77.8}, "Utrecht": {"i": 140, "b": 103, "c": 73.6}, "Zeeland": {"i": 19, "b": 13, "c": 68.4}, "Zuid-Holland": {"i": 257, "b": 184, "c": 71.6}, "Provincie Antwerpen": {"i": 1, "b": 1, "c": 100.0}, "Fryslân": {"i": 16, "b": 10, "c": 62.5}, "nan": {"i": 2, "b": 1, "c": 50.0}}};
+const NC=[{"naam": "Danny Scholing", "ordernummer": "300439334", "maand": "Januari", "adviseur": "Ramon", "waarde": 2926.0, "contact": "Mail", "reden": "Is er nog mee bezig"}, {"naam": "Petra Krudde", "ordernummer": "300441858", "maand": "Februari", "adviseur": "Torsten", "waarde": 2713.0, "contact": "Mail", "reden": "Geen gehoor"}, {"naam": "Martijn Visser", "ordernummer": "300444033", "maand": "Februari", "adviseur": "Ramon", "waarde": 1627.0, "contact": "Mail", "reden": "Geen gehoor"}, {"naam": "Melanie De Graaf", "ordernummer": "300446616", "maand": "Maart", "adviseur": "Torsten", "waarde": 4457.9, "contact": "Bellen", "reden": "Geen gehoor"}, {"naam": "Olaf Corduwener", "ordernummer": "300449873", "maand": "Maart", "adviseur": "Jeffrey", "waarde": 4230.65, "contact": "Mail", "reden": ""}, {"naam": "Anneke Rietman", "ordernummer": "300452886", "maand": "Maart", "adviseur": "Cristian", "waarde": 1361.0, "contact": "Mail", "reden": "Geen gehoor"}, {"naam": "Asli Akyol", "ordernummer": "300451792", "maand": "Maart", "adviseur": "Remco", "waarde": 1135.0, "contact": "Bellen", "reden": "Overig (reden plaatsen in blad 'redenen')"}, {"naam": "Ingeborg Bloem", "ordernummer": "300454701", "maand": "Maart", "adviseur": "Remco", "waarde": 1490.0, "contact": "Mail", "reden": "Is er nog mee bezig"}, {"naam": "Eline Kleinman", "ordernummer": "300446160", "maand": "Maart", "adviseur": "Michel", "waarde": 585.0, "contact": "Mail", "reden": ""}];
+
+function showPage(id,el){
+  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
+  document.getElementById("page-"+id).classList.add("active");
+  el.classList.add("active");
+  if(id==="apr" && !_ic.cAprAdv) initAprCharts();
+  if(id==="nc" && !_ic.cNcMeth) initNcCharts();
+}
+
+// Main charts (always visible)
+var convVals=MAANDEN.map(function(m){return MND[m].conv;});
+var convColors=[O,O,O,PU];
+new Chart(document.getElementById("cConv"),{type:"bar",data:{labels:MAANDEN,datasets:[{data:convVals,backgroundColor:convColors,borderRadius:5},{label:"Q1 gem.",data:[75.4,75.4,75.4,75.4],type:"line",borderColor:"#aaa",borderDash:[5,3],backgroundColor:"transparent",pointRadius:0,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.raw+"%";}}}},scales:{y:{min:50,max:90,grid:{color:"#f0f0f0"},ticks:{callback:function(v){return v+"%";}}}}}});
+
+var wiVals=MAANDEN.map(function(m){return MND[m].waarde_in;});
+var wbVals=MAANDEN.map(function(m){return MND[m].waarde_best;});
+var wiColors=[L,L,L,"#e1bee7"];var wbColors=[O,O,O,PU];
+new Chart(document.getElementById("cWaarde"),{type:"bar",data:{labels:MAANDEN,datasets:[{label:"Ingemeten",data:wiVals,backgroundColor:wiColors},{label:"Besteld",data:wbVals,backgroundColor:wbColors}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:"#f0f0f0"},ticks:{callback:function(v){return "\u20AC"+Math.round(v/1000)+"k";}}}}}});
+
+var colors4=[O,D,L,P];
+new Chart(document.getElementById("cAdvConv"),{type:"bar",data:{labels:ADV_NAMES,datasets:MAANDEN.map(function(m,i){return{label:m,data:ADV_NAMES.map(function(a){return ADV[a][m]?ADV[a][m].conv:0;}),backgroundColor:colors4[i]};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){var a=ADV_NAMES[ctx.dataIndex],m=MAANDEN[ctx.datasetIndex],d=ADV[a][m];return d?m+": "+d.conv+"% ("+d.besteld+"/"+d.ingemeten+")":"";}}}}},scales:{x:{ticks:{autoSkip:false}},y:{min:35,max:100,grid:{color:"#f0f0f0"},ticks:{callback:function(v){return v+"%";}}}}}};
+
+new Chart(document.getElementById("cAdvWaarde"),{type:"bar",data:{labels:ADV_NAMES,datasets:MAANDEN.map(function(m,i){return{label:m,data:ADV_NAMES.map(function(a){return ADV[a][m]?ADV[a][m].waarde_in:0;}),backgroundColor:colors4[i]};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{autoSkip:false}},y:{grid:{color:"#f0f0f0"},ticks:{callback:function(v){return "\u20AC"+Math.round(v/1000)+"k";}}}}}});
+
+// Provincie
+var _cP=null,_cPV=null;
+function gc(c){return c>=85?"#27ae60":c>=75?O:c>=65?"#f39c12":"#e74c3c";}
+function selProv(m,el){
+  document.querySelectorAll(".mbtn").forEach(function(b){b.classList.remove("active");});
+  el.classList.add("active");
+  var d=PROV[m];
+  document.getElementById("prov-title").textContent="Conversie % per provincie \u2014 "+m;
+  document.getElementById("prov-vol-title").textContent="Volume \u2014 "+m;
+  var s=Object.entries(d).sort(function(a,b){return b[1].c-a[1].c;});
+  var h=Math.max(280,s.length*40+60);
+  document.getElementById("prov-wrap").style.height=h+"px";
+  if(_cP){_cP.destroy();_cP=null;}
+  _cP=new Chart(document.getElementById("cProv"),{type:"bar",data:{labels:s.map(function(x){return x[0];}),datasets:[{data:s.map(function(x){return x[1].c;}),backgroundColor:s.map(function(x){return gc(x[1].c);})}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return s[ctx.dataIndex][1].c+"% ("+s[ctx.dataIndex][1].b+"/"+s[ctx.dataIndex][1].i+")";}}}}},scales:{x:{min:0,max:110,ticks:{callback:function(v){return v+"%";}},grid:{color:"#f0f0f0"}},y:{ticks:{autoSkip:false,font:{size:11}}}}}});
+  var vs=Object.entries(d).sort(function(a,b){return b[1].i-a[1].i;});
+  if(_cPV){_cPV.destroy();_cPV=null;}
+  _cPV=new Chart(document.getElementById("cProvVol"),{type:"bar",data:{labels:vs.map(function(x){return x[0];}),datasets:[{label:"Ingemeten",data:vs.map(function(x){return x[1].i;}),backgroundColor:L},{label:"Besteld",data:vs.map(function(x){return x[1].b;}),backgroundColor:O}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{autoSkip:false,maxRotation:45,font:{size:11}}},y:{grid:{color:"#f0f0f0"}}}}});
+  var tb=document.getElementById("provtb");tb.innerHTML="";
+  vs.forEach(function(x){var p=x[0],v=x[1];var cls=v.c>=75?"pg":v.c>=65?"po":"pr";tb.innerHTML+='<tr><td><strong>'+p+'</strong></td><td>'+v.i+'</td><td>'+v.b+'</td><td>'+(v.i-v.b)+'</td><td><span class="pill '+cls+'">'+v.c+'%</span></td></tr>';});
+}
+selProv("Totaal",document.querySelector(".mbtn.active"));
+
+// Nabellen
+new Chart(document.getElementById("cNab"),{type:"bar",data:{labels:MAANDEN,datasets:[{label:"Nabellen conv%",data:MAANDEN.map(function(m){return MND[m].nabellen_conv;}),backgroundColor:[O,O,O,PU],borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){var m=MAANDEN[ctx.dataIndex];return ctx.raw+"% ("+MND[m].nabellen_besteld+"/"+MND[m].nabellen_benaderd+")";}}}}},scales:{y:{min:0,max:55,grid:{color:"#f0f0f0"},ticks:{callback:function(v){return v+"%";}}}}}});
+
+var allRedenen={};MAANDEN.forEach(function(m){Object.entries(MND[m].redenen||{}).forEach(function(e){allRedenen[e[0]]=(allRedenen[e[0]]||0)+e[1];});});
+var redenSorted=Object.entries(allRedenen).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+new Chart(document.getElementById("cReden"),{type:"doughnut",data:{labels:redenSorted.map(function(x){return x[0].length>22?x[0].substring(0,22)+"...":x[0];}),datasets:[{data:redenSorted.map(function(x){return x[1];}),backgroundColor:["#2D2D2D","#F59901","#e74c3c","#95a5a6","#27ae60","#F9CD92","#9b59b6","#3498db"],borderWidth:2,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"right",labels:{font:{size:10},boxWidth:10}}}}});
+
+// Lazy init for April and NC
+var _ic={};
+function initAprCharts(){
+  _ic.cAprAdv=true;
+  var aprAdv=MAANDEN[3];var aprCols=ADV_NAMES.map(function(a){var c=ADV[a][aprAdv]?ADV[a][aprAdv].conv:0;return c>=70?"#27ae60":c>=60?O:c>=50?"#ff9800":"#ef5350";});
+  var q1refs=ADV_NAMES.map(function(a){var s=0,n=0;["Januari","Februari","Maart"].forEach(function(m){if(ADV[a][m]){s+=ADV[a][m].conv;n++;}});return n>0?Math.round(s/n*10)/10:74.6;});
+  new Chart(document.getElementById("cAprAdv"),{type:"bar",data:{labels:ADV_NAMES,datasets:[{label:"April",data:ADV_NAMES.map(function(a){return ADV[a][aprAdv]?ADV[a][aprAdv].conv:0;}),backgroundColor:aprCols,borderRadius:4},{label:"Q1 gem.",data:q1refs,backgroundColor:"rgba(45,45,45,0.2)",borderColor:D,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{boxWidth:12,font:{size:11}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+": "+ctx.raw+"%";}}}}}},scales:{x:{ticks:{autoSkip:false}},y:{min:30,max:100,grid:{color:"#f0f0f0"},ticks:{callback:function(v){return v+"%";}}}}}});
+  var aprProv=PROV["April"]||{};var aprPS=Object.entries(aprProv).sort(function(a,b){return b[1].c-a[1].c;});
+  new Chart(document.getElementById("cAprProv"),{type:"bar",data:{labels:aprPS.map(function(x){return x[0];}),datasets:[{data:aprPS.map(function(x){return x[1].c;}),backgroundColor:aprPS.map(function(x){return gc(x[1].c);})}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return aprPS[ctx.dataIndex][1].c+"% ("+aprPS[ctx.dataIndex][1].b+"/"+aprPS[ctx.dataIndex][1].i+")";}}}}},scales:{x:{min:0,max:110,ticks:{callback:function(v){return v+"%";}},grid:{color:"#f0f0f0"}},y:{ticks:{autoSkip:false,font:{size:10}}}}}});
+}
+
+function initNcCharts(){
+  _ic.cNcMeth=true;
+  new Chart(document.getElementById("cNcMeth"),{type:"doughnut",data:{labels:["\u{1F4E7} Mail (7x)","\u{1F4DE} Bellen (2x)"],datasets:[{data:[7,2],backgroundColor:[BL,O],borderWidth:3,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{font:{size:12},boxWidth:12}}}}});
+  var nm={Januari:0,Februari:0,Maart:0};
+  NC.forEach(function(x){if(nm[x.maand]!==undefined)nm[x.maand]++;});
+  new Chart(document.getElementById("cNcMnd"),{type:"bar",data:{labels:Object.keys(nm),datasets:[{data:Object.values(nm),backgroundColor:BL,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:5,ticks:{stepSize:1},grid:{color:"#f0f0f0"}}}}});
+}
+</script>
+</body>
+</html>
