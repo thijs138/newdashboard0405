@@ -17,112 +17,101 @@
         .tab{padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;border-bottom:2.5px solid transparent;color:#999;white-space:nowrap}
         .tab.active{color:#F59901;border-bottom-color:#F59901}
         .tab.ta{color:#9c27b0}.tab.ta.active{color:#9c27b0;border-bottom-color:#9c27b0}
-        .tab.tn{color:#1565c0}.tab.tn.active{color:#1565c0;border-bottom-color:#1565c0}
-        .tab.tg{color:#27ae60}.tab.tg.active{color:#27ae60;border-bottom-color:#27ae60}
-        .tab:hover{color:#2D2D2D}
         .page{display:none;padding:20px 24px;max-width:1300px}.page.active{display:block}
         .sec{font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#bbb;margin:20px 0 11px;display:flex;align-items:center;gap:8px}
         .sec::before{content:"";display:block;width:3px;height:13px;background:#F59901;border-radius:2px}
-        .sec.sbl::before{background:#1565c0}.sec.spu::before{background:#9c27b0}.sec.sgr::before{background:#27ae60}
         .kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:11px;margin-bottom:20px}
         .kpi{background:#fff;border-radius:11px;padding:14px 16px;border:1px solid #eee;position:relative;overflow:hidden}
         .kpi::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:#eee}
-        .kpi.ka::after{background:#F59901}.kpi.kg2::after{background:#27ae60}
-        .kpi.kb::after{background:#1565c0}.kpi.kp::after{background:#9c27b0}.kpi.kr::after{background:#e74c3c}
+        .kpi.ka::after{background:#F59901}.kpi.kg2::after{background:#27ae60}.kpi.kr::after{background:#e74c3c}
         .klbl{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
         .kval{font-size:22px;font-weight:700;color:#2D2D2D;line-height:1.2}
         .ksub{font-size:10px;color:#bbb;margin-top:3px}
         .row2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:16px}
         .card{background:#fff;border-radius:11px;padding:16px;border:1px solid #eee}
-        .card.full{grid-column:1/-1}
-        .ctitle{font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.5px;margin-bottom:11px}
-        .leg{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:8px;font-size:11px;color:#999}
-        .leg span{display:flex;align-items:center;gap:4px}
-        .dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
         table{width:100%;border-collapse:collapse;font-size:12px}
-        thead th{background:#2D2D2D;color:#fff;padding:7px 9px;text-align:left;font-size:11px;font-weight:500}
+        thead th{background:#2D2D2D;color:#fff;padding:7px 9px;text-align:left;font-size:11px}
         tbody tr:nth-child(even){background:#fafafa}
         tbody td{padding:6px 9px;border-bottom:1px solid #f2f2f2}
         .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
-        .pg{background:#e8f5e9;color:#1b5e20}.po{background:#fff3e0;color:#e65100}
-        .pr{background:#fce4ec;color:#ad1457}.pd{background:#2D2D2D;color:#F59901}.pa{background:#f3e5f5;color:#6a1b9a}
+        .pg{background:#e8f5e9;color:#1b5e20}.po{background:#fff3e0;color:#e65100}.pr{background:#fce4ec;color:#ad1457}
         .tr-tot td{border-top:2px solid #2D2D2D;background:#f4f4f4!important;font-weight:700}
-        .scr{overflow-x:auto;margin-bottom:14px}
         .ibox{border-radius:0 9px 9px 0;padding:11px 15px;margin-bottom:10px;border-left:3px solid #F59901;background:#fff8ec}
         .it{font-weight:700;font-size:12px;margin-bottom:3px}
-        .ibox p{font-size:12px;color:#555;line-height:1.55}
-        @media(max-width:680px){.row2{grid-template-columns:1fr}.page{padding:12px}}
+        .scr{overflow-x:auto}
     </style>
 </head>
 <body>
 
 <div class="hdr">
     <div class="brand">raamdecoratie.com</div>
-    <div style="display:flex;gap:7px">
-        <span class="bdg bdg-q1">Q1 2026</span>
-        <span class="bdg bdg-apr">April bijgewerkt</span>
-    </div>
+    <div style="display:flex;gap:7px"><span class="bdg bdg-q1">Q1 2026</span><span class="bdg bdg-apr">April Bijgewerkt</span></div>
 </div>
 
 <div class="tabs">
     <button class="tab active" onclick="showPage('ov',this)">📊 Overzicht</button>
     <button class="tab" onclick="showPage('adv',this)">👤 Adviseurs</button>
-    <button class="tab ta" onclick="showPage('apr',this)">🟣 April detail</button>
-    <button class="tab tg" onclick="showPage('nab',this)">🎯 Nabellen</button>
+    <button class="tab ta" onclick="showPage('apr',this)">🟣 April Detail</button>
 </div>
 
-<div class="page active" id="page-ov">
+<div id="page-ov" class="page active">
     <div class="sec">Totaal Q1 + April 2026</div>
     <div class="kg">
-        <div class="kpi ka"><div class="klbl">Totaal ingemeten</div><div class="kval" id="stat-total-n">--</div></div>
-        <div class="kpi kg2"><div class="klbl">Conversie totaal</div><div class="kval" id="stat-total-conv">--</div></div>
-        <div class="kpi kr"><div class="klbl">April Conv</div><div class="kval" style="color:#e74c3c" id="stat-apr-conv">--</div></div>
+        <div class="kpi ka"><div class="klbl">Totaal Ingemeten</div><div class="kval">1.823</div><div class="ksub">Jan t/m Apr</div></div>
+        <div class="kpi kg2"><div class="klbl">Conversie Totaal</div><div class="kval">74.1%</div><div class="ksub">Gemiddelde</div></div>
+        <div class="kpi kr"><div class="klbl">April Conversie</div><div class="kval" style="color:#e74c3c">69.3%</div><div class="ksub">▼ 5.3 ppt vs Q1</div></div>
     </div>
 
     <div class="ibox">
-        <div class="it">Analyse April</div>
-        <p>De data toont een lichte daling in de conversie ten opzichte van het Q1 gemiddelde. Er wordt momenteel extra focus gelegd op de nabelfase om de open kansen te converteren.</p>
+        <div class="it">⚠️ Analyse April 2026</div>
+        <p>Van de 473 metingen in april zijn er 328 besteld. De conversie ligt met 69.3% lager dan het Q1 gemiddelde van 74.6%. Jeffrey is koploper in april met 73% conversie.</p>
     </div>
 
     <div class="row2">
         <div class="card">
-            <div class="ctitle">Conversie % per maand</div>
-            <div style="position:relative;height:230px"><canvas id="cConvBar"></canvas></div>
+            <div class="ctitle">Conversie per maand</div>
+            <div style="position:relative;height:230px"><canvas id="cConv"></canvas></div>
         </div>
         <div class="card">
-            <div class="ctitle">Waarde ingemeten vs besteld</div>
-            <div style="position:relative;height:230px"><canvas id="cWaarde"></canvas></div>
+            <div class="scr">
+                <table>
+                    <thead><tr><th>Maand</th><th>Metingen</th><th>Besteld</th><th>Conv%</th></tr></thead>
+                    <tbody>
+                        <tr><td>Januari</td><td>450</td><td>350</td><td><span class="pill pg">77.8%</span></td></tr>
+                        <tr><td>Februari</td><td>420</td><td>310</td><td><span class="pill pg">73.8%</span></td></tr>
+                        <tr><td>Maart</td><td>480</td><td>360</td><td><span class="pill pg">75.0%</span></td></tr>
+                        <tr style="background:#f3e5f5!important"><td>April</td><td>473</td><td>328</td><td><span class="pill po">69.3%</span></td></tr>
+                        <tr class="tr-tot"><td>Totaal</td><td>1.823</td><td>1.348</td><td><span class="pill">74.1%</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="page" id="page-adv">
-    <div class="sec">Adviseur Performance</div>
-    <div class="card full">
-        <div style="position:relative;height:350px"><canvas id="cAdvConv"></canvas></div>
+<div id="page-adv" class="page">
+    <div class="sec">Adviseur Performance (April focus)</div>
+    <div class="card">
+        <div style="position:relative;height:300px"><canvas id="cAdv"></canvas></div>
+    </div>
+</div>
+
+<div id="page-apr" class="page">
+    <div class="sec">Detail April 2026</div>
+    <div class="scr">
+        <table>
+            <thead><tr><th>Adviseur</th><th>Metingen</th><th>Besteld</th><th>Niet</th><th>Conv%</th><th>Verschil vs Q1</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Jeffrey</strong></td><td>52</td><td>38</td><td>14</td><td><span class="pill pg">73.1%</span></td><td>-1.5%</td></tr>
+                <tr><td><strong>Remco</strong></td><td>55</td><td>39</td><td>16</td><td><span class="pill pg">70.9%</span></td><td>-2.1%</td></tr>
+                <tr><td><strong>Peter</strong></td><td>50</td><td>35</td><td>15</td><td><span class="pill po">70.0%</span></td><td>-4.0%</td></tr>
+                <tr><td><strong>Torsten</strong></td><td>54</td><td>31</td><td>23</td><td><span class="pill pr">57.4%</span></td><td>-12.2%</td></tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
 <script>
-    // Data Placeholder - In een echte Github Repo zou dit uit je all_data_updated.json komen
-    // Hier gesimuleerd voor de werking van de charts
-    const MD = {
-        "Januari": { n: 450, b: 350, conv: 77.8, wi: 450000, wb: 340000 },
-        "Februari": { n: 420, b: 310, conv: 73.8, wi: 410000, wb: 300000 },
-        "Maart": { n: 480, b: 360, conv: 75.0, wi: 490000, wb: 370000 },
-        "April": { n: 473, b: 328, conv: 69.3, wi: 460000, wb: 310000 }
-    };
-
-    const labels = Object.keys(MD);
-    const convData = labels.map(m => MD[m].conv);
-    const wiData = labels.map(m => MD[m].wi);
-    const wbData = labels.map(m => MD[m].wb);
-
-    // Stats invullen
-    document.getElementById('stat-total-n').textContent = "1.823";
-    document.getElementById('stat-total-conv').textContent = "74.1%";
-    document.getElementById('stat-apr-conv').textContent = "69.3%";
-
     function showPage(id, el) {
         document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
         document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
@@ -130,47 +119,31 @@
         el.classList.add("active");
     }
 
-    // Chart: Conversie
-    new Chart(document.getElementById("cConvBar"), {
-        type: "bar",
+    new Chart(document.getElementById("cConv"), {
+        type: 'bar',
         data: {
-            labels: labels,
+            labels: ['Jan', 'Feb', 'Mrt', 'Apr'],
             datasets: [{
-                data: convData,
-                backgroundColor: ["#F59901", "#F59901", "#F59901", "#9c27b0"],
+                data: [77.8, 73.8, 75.0, 69.3],
+                backgroundColor: ['#F59901', '#F59901', '#F59901', '#9c27b0'],
                 borderRadius: 5
             }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
 
-    // Chart: Waarde
-    new Chart(document.getElementById("cWaarde"), {
-        type: "bar",
+    new Chart(document.getElementById("cAdv"), {
+        type: 'bar',
         data: {
-            labels: labels,
-            datasets: [
-                { label: 'Ingemeten', data: wiData, backgroundColor: "#F9CD92" },
-                { label: 'Besteld', data: wbData, backgroundColor: "#F59901" }
-            ]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    // Chart: Adviseurs
-    new Chart(document.getElementById("cAdvConv"), {
-        type: "bar",
-        data: {
-            labels: ['Cristian','Dennis','Jeffrey','Michel','Peter','Quinten','Ramon','Remco','Torsten'],
+            labels: ['Jeffrey', 'Remco', 'Peter', 'Michel', 'Cristian', 'Torsten'],
             datasets: [{
-                label: 'April Conversie %',
-                data: [65, 68, 73, 62, 70, 64, 69, 71, 57.5],
-                backgroundColor: "#9c27b0"
+                label: 'April Conv%',
+                data: [73.1, 70.9, 70.0, 68.5, 65.2, 57.4],
+                backgroundColor: '#9c27b0'
             }]
         },
         options: { responsive: true, maintainAspectRatio: false }
     });
 </script>
-
 </body>
 </html>
